@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS Setting (
+	User_ID  INTEGER  NOT NULL PRIMARY KEY   AUTOINCREMENT,
+	Email  VARCHAR (50) NOT NULL ,
+    User_Password VARCHAR (25) NOT NULL,
+    First_Name VARCHAR (25) NOT NULL,
+    Last_Name VARCHAR (25) NOT NULL,
+    User_TZ INTEGER NOT NULL ,
+    User_Phone_Number VARCHAR (15) NOT NULL,
+    Shift_status  BOOLEAN,
+   UNIQUE (Email,User_TZ)
+);
+INSERT INTO Setting VALUES(NULL,'Avi8Rubin@gmail.com',1,'Avi',' Rubin',302483607,'052-578

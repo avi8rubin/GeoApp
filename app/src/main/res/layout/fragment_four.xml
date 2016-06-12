@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.androidhive.materialtabs.fragments.OneFragment">
+    <DigitalClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/digitalClock"
+        android:textSize="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exit_fron_shifn_btn"
+        android:id="@+id/exit_to_shift_button"
+        android:onClick="onclick_exit"
+        android:layout_below="@+id/start_shift_time_msg"
+        android:layout_centerHorizontal="true"
+        android:nestedScrollingEnabled="false"
+        android:background="@drawable/button"
+        />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/exit_to_shift_msg"
+        android:id="@+id/enter_to_shift_msg"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:alpha="1"
+        android:textColor="@color/common_google_signin_btn_text_light" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/start_shift_time_msg"
+        android:layout_below="@+id/digitalClock"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp" />
+
+</RelativeLayout>

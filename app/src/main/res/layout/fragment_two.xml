@@ -1,0 +1,125 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.androidhive.materialtabs.fragments.TwoFragment">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:id="@+id/scrollView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="78dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/shift_table"
+            android:baselineAligned="false"
+            android:nestedScrollingEnabled="true">
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false">
+
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="20px" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/shift_id" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/clock_in"
+                    android:maxHeight="10dp"
+                    android:maxWidth="10dp"
+                    android:minHeight="10dp"
+                    android:minWidth="10dp"
+                    />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView3"
+                    android:src="@drawable/clock_out"
+                    android:maxHeight="10dp"
+                    android:maxWidth="10dp"
+                    android:minHeight="10dp"
+                    android:minWidth="10dp" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView4"
+                    android:src="@drawable/loction_enter"
+                    android:maxHeight="10dp"
+                    android:maxWidth="10dp"
+                    android:minHeight="10dp"
+                    android:minWidth="10dp" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView5"
+                    android:src="@drawable/loction_out"
+                    android:maxHeight="10dp"
+                    android:maxWidth="10dp"
+                    android:minHeight="10dp"
+                    android:minWidth="10dp" />
+
+            </TableRow>
+
+        </TableLayout>
+    </ScrollView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/month_manager"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageView6"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/month_manager"
+        android:layout_toStartOf="@+id/month_manager"
+        android:src="@drawable/prev"
+        android:onClick="Prev_Month" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageView7"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/month_manager"
+        android:layout_toEndOf="@+id/month_manager"
+        android:src="@drawable/next"
+        android:onClick="Next_Month" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/year_manager"
+        android:layout_below="@+id/month_manager"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

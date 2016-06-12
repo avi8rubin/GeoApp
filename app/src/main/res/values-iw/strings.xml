@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">הגדרות</string>
+    <string name="enter_to_shift_btn">כניסה</string>
+    <string name="find_geo_location_msg">מחפש מיקום אנא המתן...</string>
+    <string name="find_geo_location_title">הודעת GEO</string>
+    <string name="font_fontFamily_medium">sans-serif-medium</string>
+    <string name="enter_to_shift_msg">על מנת להיכנס יש ללחוץ כניסה</string>
+    <string name="title_activity_maps">title_activity_maps</string>
+    <string name="title_activity_icon_tabs">title_activity_icon_tabs</string>
+    <string name="exit">יציאה</string>
+    <string name="confirm">אישור</string>
+    <string name="gps_service">לפתוח את שירותי המיקום?</string>
+    <string name="gps_enable">שירותי מיקום</string>
+    <string name="no">לא</string>
+    <string name="yes">כן</string>
+    <string name="enter">כניסה</string>
+    <string name="enter_anyway">כניסה ללא מיקום</string>
+    <string name="exit_fron_shifn_btn">יציאה</string>
+    <string name="exit_to_shift_msg">על מנת לצאת יש ללחוץ על יציאה</string>
+    <string name="exit_any_way">יציאה ללא מיקום</string>
+    <string name="first_name">שם פרטי</string>
+    <string name="last_name">שם משפחה</string>
+    <string name="manager">מנהל</string>
+    <string name="tz">ת"ז</string>
+    <string name="worker">עובד\ת</string>
+    <string name="email">אימייל</string>
+    <string name="login">כניסה</string>
+    <string name="sign_in_txt">רישום</string>
+    <string name="password">סיסמא</string>
+    <string name="phone_number">מספר פלאפון</string>
+    <string name="action_sign_in">היכנס / הירשם</string>
+    <string name="action_sign_in_short">הירשם</string>
+    <string name="edit_comapny_code">ערוך קוד חברה</string>
+    <string name="setting">הגדרות</string>
+    <string name="shift_enter_time">זמן כניסה</string>
+    <string name="field_error">שדה אחד או יותר ריק</string>
+    <string name="new_company">צור חברה</string>
+    <string name="company_name">שם החברה</string>
+    <string name="google_maps_key" translatable="false">AIzaSyC7pLYoDfk2F5mygsINy6uh5DPJflXhlbw</string>
+    <string name="company_address">כתובת החברה</string>
+    <string name="location_latitude">מיקום (רו רוחב)</string>
+    <string name="location_longitude">מיקום (קו אורך)</string>
+    <string name="create">הוסף</string>
+    <string name="company_empty_name">יש למלא לפחות את שם החברה</string>
+    <string name="company_created">החברה נוצרה</string>
+    <string name="error_field_required">שדה זה הינו שדה חובה</string>
+    <string name="select_worker">בחר עובד</string>
+    <string name="logout">יציאה</string>
+</resources>

@@ -1,0 +1,50 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.androidhive.materialtabs.fragments.OneFragment">
+        <DigitalClock
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/digitalClock"
+            android:textSize="20dp"
+            android:layout_marginTop="27dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_to_shift_btn"
+            android:id="@+id/enter_to_shift_button"
+            android:onClick="onclick_enter"
+            android:nestedScrollingEnabled="false"
+            android:layout_above="@+id/enter_to_shift_msg"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/button" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/enter_to_shift_msg"
+        android:id="@+id/enter_to_shift_msg"
+        android:gravity="center_horizontal"
+        android:alpha="1"
+        android:textColor="@color/common_google_signin_btn_text_light"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="123dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/start_shift_time_msg"
+        android:layout_below="@+id/digitalClock"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp" />
+
+</RelativeLayout>

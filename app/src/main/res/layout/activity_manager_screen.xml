@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="info.androidhive.materialtabs.activity.Manager_screen"
+    android:background="#c7f1fb">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="250dp"
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/year_manager"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/manager_logout">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/manager_table"
+            android:baselineAligned="false"
+            android:nestedScrollingEnabled="true"
+            android:gravity="center_horizontal">
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:background="@color/common_google_signin_btn_text_dark_default">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/shift_id"
+                    android:layout_column="1" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/clock_in"
+                    android:layout_column="2"
+                    />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView3"
+                    android:src="@drawable/clock_out"
+                    android:layout_column="3"/>
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView4"
+                    android:src="@drawable/loction_enter"
+                    android:layout_column="4"/>
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView5"
+                    android:src="@drawable/loction_out"
+                    android:layout_column="5"/>
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/duration"
+                    android:src="@drawable/duration"
+                    android:layout_column="6" />
+
+            </TableRow>
+
+        </TableLayout>
+    </ScrollView>
+
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:background="@color/background_material_light" />
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/month_manager"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/spinner" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageView6"
+        android:src="@drawable/prev"
+        android:onClick="Prev_Month"
+        android:layout_above="@+id/scrollView"
+        android:layout_toLeftOf="@+id/month_manager"
+        android:layout_toStartOf="@+id/month_manager"
+        android:background="@color/background_floating_material_light" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageView7"
+        android:src="@drawable/next"
+        android:onClick="Next_Month"
+        android:layout_above="@+id/scrollView"
+        android:layout_toRightOf="@+id/month_manager"
+        android:layout_toEndOf="@+id/month_manager"
+        android:background="@color/background_floating_material_light" />
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="year_manager"
+        android:id="@+id/year_manager"
+        android:layout_below="@+id/month_manager"
+        android:layout_centerHorizontal="true"
+        android:gravity="center|center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/logout"
+        android:id="@+id/manager_logout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="on_click_logout_manager"
+        android:background="@drawable/button"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CODE"
+        android:id="@+id/company_code_txt"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setting"
+        android:id="@+id/manager_setting_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/button"
+        android:textColor="#ffffff" />
+</RelativeLayout>

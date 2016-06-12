@@ -1,12 +1,8 @@
 package info.androidhive.materialtabs.GeoObjects;
 
-import android.util.Log;
-
 import info.androidhive.materialtabs.common.Status;
 
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.SaveCallback;
 
 import java.io.Serializable;
 import java.util.ArrayList;

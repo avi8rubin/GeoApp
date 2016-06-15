@@ -44,7 +44,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     private static final String ExitTime = "ExitTime";
     private static final String EnterLocation = "EnterLocation";
     private static final String ExitLocation = "ExitLocation";
-    private static final String ShiftStatus = "ShiftStatus"; //1=ENTER , 2=EXIT , 3=CLOSE
+    private static final String ShiftStatus = "ShiftStatus";
     private static final String Duration = "Duration";
 
     //Company columns

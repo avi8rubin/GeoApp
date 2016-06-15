@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
 
 
         Parse.initialize(this, "WNbaXzzXNTyvDefzEFKoaIxXcdfDUtuac2g8ZgDC", "Sa4HLlt21b4wfycwoPgnR9aKOXfAQonhloO1zWUS");
-        //Avi rubin Updateff
+        //Avi rubin Updateffgfdgd
 
         //------DB Start------///
         if (firstRun) {

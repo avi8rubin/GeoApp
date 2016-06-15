@@ -49,6 +49,7 @@ public class Shift implements Serializable {
         }
     }
     public String getDuration (){
+        if(Duration == 0) return "xx:xx";
         int Hours = (int)Duration/(1000 * 60 * 60);
         int Mins = (60 % ((int)Duration / (1000*60)));
         return Hours + ":" + Mins;

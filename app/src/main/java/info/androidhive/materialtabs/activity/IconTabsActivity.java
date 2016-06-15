@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import info.androidhive.materialtabs.R;
+import info.androidhive.materialtabs.common.GeoAppDBHelper;
 import info.androidhive.materialtabs.common.User_callback;
 import info.androidhive.materialtabs.fragments.FourFragment;
 import info.androidhive.materialtabs.fragments.OneFragment;
@@ -51,10 +52,7 @@ public class IconTabsActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private boolean first_time_flag;
     private boolean shift_status;
-    private String Shift_start_Time;
-    private ArrayList<String> arrayList;
-    private ArrayAdapter<String> adapter;
-    private EditText txtInput;
+    public GeoAppDBHelper DB;
     private int Month_number;
     private int Year_number;
     private  CalendarView calendar;
@@ -62,6 +60,8 @@ public class IconTabsActivity extends AppCompatActivity {
     private  int[] tabIcons = {R.drawable.loction,R.drawable.history,R.drawable.setting1};
     private  int[] tabHIcons = {R.drawable.h_loction,R.drawable.h_history,R.drawable.h_setting1};
     private SQLiteDatabase myDB;
+    private String Shift_start_Time;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,12 +77,12 @@ public class IconTabsActivity extends AppCompatActivity {
         Current_User =new User_callback();
         Current_User =(User_callback)getIntent().getSerializableExtra("user");
 
+        DB = new GeoAppDBHelper(getApplicationContext());
 
-
-        if(User_Shift_Active())
+        if(DB.isShiftActive())
         {
             shift_status=true;
-            Shift_start_Time=get_User_Start_shift();
+            Shift_start_Time=DB.get_User_Start_shift();
         }
         else
         {
@@ -97,30 +97,6 @@ public class IconTabsActivity extends AppCompatActivity {
         setupTabIcons();
         setup_Comapny_code();
 
-    }
-
-    public boolean User_Shift_Active(){
-        if(myDB==null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet= myDB.rawQuery("SELECT * FROM ShiftBuffer WHERE Shift_status = 1;", null);
-        resultSet.moveToNext();
-        return resultSet.getCount()>0;
-    }
-    public String get_User_Start_shift() {
-        try {
-            if (myDB == null)
-                myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            Cursor resultSet = myDB.rawQuery("SELECT shift_start_time FROM ShiftBuffer Shift_status = 1;", null);
-            if (resultSet.getCount() > 0) {
-                resultSet.moveToNext();
-                String l = resultSet.getString(0);
-
-                return l;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
     private void setupTabIcons() {
         if(first_time_flag){
@@ -251,9 +227,7 @@ public class IconTabsActivity extends AppCompatActivity {
         table.removeViews(1, table.getChildCount() - 1);
 
         try {
-            if (myDB == null)
-                myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            Cursor resultSet = myDB.rawQuery("SELECT * FROM ShiftBuffer ;", null);
+            Cursor resultSet =DB.getShift();
             int number_of_row=resultSet.getCount();
             if (number_of_row> 0) {
                 resultSet.moveToNext();

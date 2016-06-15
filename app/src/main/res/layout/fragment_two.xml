@@ -32,13 +32,13 @@
                     android:layout_height="20px" />
 
                 <ImageView
-                    android:layout_width="70dp"
+                    android:layout_width="50dp"
                     android:layout_height="60dp"
                     android:id="@+id/imageView"
                     android:src="@drawable/shift_id" />
 
                 <ImageView
-                    android:layout_width="70dp"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:id="@+id/imageView2"
                     android:src="@drawable/clock_in"
@@ -49,7 +49,7 @@
                     />
 
                 <ImageView
-                    android:layout_width="70dp"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:id="@+id/imageView3"
                     android:src="@drawable/clock_out"
@@ -59,7 +59,7 @@
                     android:minWidth="10dp" />
 
                 <ImageView
-                    android:layout_width="70dp"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:id="@+id/imageView4"
                     android:src="@drawable/loction_enter"
@@ -69,7 +69,7 @@
                     android:minWidth="10dp" />
 
                 <ImageView
-                    android:layout_width="70dp"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:id="@+id/imageView5"
                     android:src="@drawable/loction_out"
@@ -77,6 +77,20 @@
                     android:maxWidth="10dp"
                     android:minHeight="10dp"
                     android:minWidth="10dp" />
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView10"
+                    android:src="@drawable/duration"
+                    android:maxHeight="10dp"
+                    android:maxWidth="10dp"
+                    android:minHeight="10dp"
+                    android:minWidth="10dp" />
+
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="20px" />
 
             </TableRow>
 

@@ -144,5 +144,6 @@ public class Shift implements Serializable {
     }
     public void setExitTimeNow(){
         ExitTime = (Calendar.getInstance()).getTime();
+        Duration = ExitTime.getTime() - EnterTime.getTime();
     }
 }

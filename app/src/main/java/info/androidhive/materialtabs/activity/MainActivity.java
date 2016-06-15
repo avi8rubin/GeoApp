@@ -43,8 +43,8 @@ public class MainActivity extends Activity {
         this.deleteDatabase(DB.getDatabaseName());
         if(DB.isUserWasAtive()) {
             // startActivity(new Intent(this,Manager_screen.class));
-           // startActivity(new Intent(this, Login_Activity.class));
-            startActivity(new Intent(this,IconTabsActivity.class));
+           startActivity(new Intent(this, Login_Activity.class));
+            //startActivity(new Intent(this,IconTabsActivity.class));
         }
         else
         {

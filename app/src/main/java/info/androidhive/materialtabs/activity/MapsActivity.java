@@ -334,19 +334,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentShift.setEnterLocation(new ParseGeoPoint(lat, lng));
         currentShift.setShiftStatus(Status.ENTER);
         currentShift = (Shift) Server.setShiftStatus(currentShift);
-        /*
-        String SystemID="";
-        try {
-            ParseObject parseObject = currentShift.getParseObject();
-            parseObject.save();
-            SystemID= parseObject.getObjectId();
-            SystemID= currentShift.getParseObject().getObjectId();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-*/
-
-
         try {
             myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
             String time = getDateTime();

@@ -39,8 +39,10 @@ public class Server {
             e.printStackTrace();
         }
         // Create new user, save it in parse and get the id
-        user.setSystemID(saveAndGetObjectID(user));
+        String userID = saveAndGetObjectID(user);
+        user.setSystemID(userID);
         return user;
+
     }
 
     public static Object getUserDetails(User user) {
@@ -264,9 +266,11 @@ public class Server {
         }
         //set objectID to user object
         synchronized (lockObj) {
+            while (po.getObjectId() == null) sleep((long) 100);
             if (po.getObjectId() != null)
                 return po.getObjectId();
             else return null;
+
         }
     }
     private static String saveAndGetObjectID(Company company) {
@@ -278,18 +282,19 @@ public class Server {
                 public void done(ParseException e) {
                     if (e == null) {
                         // Saved successfully.
-                        Log.d(TAG, "User update saved!");
+                        Log.d(TAG, "Company update saved!");
                         String id = po.getObjectId();
                         Log.d(TAG, "The object id is: " + id);
                     } else {
                         // The save failed.
-                        Log.d(TAG, "User update error: " + e);
+                        Log.d(TAG, "Company update error: " + e);
                     }
                 }
             });
         }
         //set objectID to user object
         synchronized (lockObj) {
+            while (po.getObjectId() == null) sleep((long) 100);
             if (po.getObjectId() != null)
                 return po.getObjectId();
             else return null;
@@ -316,10 +321,21 @@ public class Server {
         }
         //set objectID to user object
         synchronized (lockObj) {
+            while (po.getObjectId() == null) sleep((long) 100);
             if (po.getObjectId() != null)
                 return po.getObjectId();
             else return null;
         }
     }
 
+    public static Object getLockObj(){
+        return lockObj;
+    }
+    private static void sleep(Long time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

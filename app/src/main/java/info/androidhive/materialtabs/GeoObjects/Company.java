@@ -16,7 +16,7 @@ public class Company implements Serializable {
     private String CompanyName;
     private String ManagerID;
     private String ManagerEmail;
-    private String CompantAddress;
+    private String CompanyAddress;
     private ParseGeoPoint Location;
     private Date CreateDate;
 
@@ -77,7 +77,7 @@ public class Company implements Serializable {
         ParseObject po = new ParseObject("Company");
         po.put("Company_manager_email",ManagerEmail);
         po.put("Company_name",CompanyName);
-        po.put("CompantAddress",CompantAddress);
+        po.put("CompantAddress",CompanyAddress);
         if(Location != null) po.put("Company_Geo_Point",Location);
         po.put("Manager_ID",ManagerID);
         return po;
@@ -86,17 +86,17 @@ public class Company implements Serializable {
         CompanyCode = po.getObjectId();
         ManagerEmail = po.getString("Company_manager_email");
         CompanyName = po.getString("Company_name");
-        CompantAddress = po.getString("CompantAddress");
+        CompanyAddress = po.getString("CompantAddress");
         Location = po.getParseGeoPoint("Company_Geo_Point");
         ManagerID = po.getString("Manager_ID");
         CreateDate = po.getCreatedAt();
     }
 
-    public String getCompantAddress() {
-        return CompantAddress;
+    public String getCompanyAddress() {
+        return CompanyAddress;
     }
 
-    public void setCompantAddress(String compantAddress) {
-        CompantAddress = compantAddress.trim();
+    public void setCompanyAddress(String compantAddress) {
+        CompanyAddress = compantAddress.trim();
     }
 }

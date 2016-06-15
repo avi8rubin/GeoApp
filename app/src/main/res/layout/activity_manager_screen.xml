@@ -86,8 +86,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false"
         android:background="@color/background_material_light" />
 
     <TextView

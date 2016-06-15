@@ -55,7 +55,7 @@ public class createNewCompany extends AppCompatActivity {
             errorMsg.setText(R.string.company_empty_name);
         else{
             company.setCompanyName(companyName.getText().toString().trim());
-            company.setCompantAddress(companyAddress.getText().toString().trim());
+            company.setCompanyAddress(companyAddress.getText().toString().trim());
             company.setManagerEmail(manager.getEmail().trim());
             company.setManagerID(manager.getSystemID().trim());
             try{

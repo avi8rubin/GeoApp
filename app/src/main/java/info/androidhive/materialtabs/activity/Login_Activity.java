@@ -110,7 +110,7 @@ public class Login_Activity extends AppCompatActivity {
         Error = (TextView)findViewById(R.id.error_text);
         Error.setText("");
         Logo = (ImageView) findViewById(R.id.imageView8);
-        get_new_current_user();
+        //get_new_current_user();
 
         // Set user details if cane from signin activity
         Bundle extras = getIntent().getExtras();

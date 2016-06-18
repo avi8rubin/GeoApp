@@ -23,9 +23,11 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
 
 import info.androidhive.materialtabs.common.GeoAppDBHelper;
+import info.androidhive.materialtabs.common.Globals;
 import info.androidhive.materialtabs.common.ReadFile;
 import info.androidhive.materialtabs.common.Server;
 
@@ -40,8 +42,32 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Parse.initialize(this, "WNbaXzzXNTyvDefzEFKoaIxXcdfDUtuac2g8ZgDC", "Sa4HLlt21b4wfycwoPgnR9aKOXfAQonhloO1zWUS");
         DB = new GeoAppDBHelper(getApplicationContext());
-        this.deleteDatabase(DB.getDatabaseName());
-        if(DB.isUserWasAtive()) {
+        //this.deleteDatabase(DB.getDatabaseName());
+        //DB = new GeoAppDBHelper(getApplicationContext());
+        Object returnVal = DB.getLastLoginUser();
+        if(returnVal instanceof User){  //Get user object back
+            Intent intent;
+            User user = (User) returnVal;
+            if(user.getAutoLogin() && user.isManager()) { //User is manager and have auto login settings and
+                intent = new Intent(this, Manager_screen.class);
+                intent.putExtra(Globals.EXTRA_USER,user);
+                startActivity(intent);
+            }
+            else if (user.getAutoLogin() && user.isWorker()) { //User is worker and have auto login settings and
+                intent = new Intent(this, IconTabsActivity.class);
+                intent.putExtra(Globals.EXTRA_USER,user);
+                startActivity(intent);
+            }
+            else {//User not check auto login in settings screen
+                intent = new Intent(this, Login_Activity.class);
+                intent.putExtra(Globals.EXTRA_USER,user);
+                startActivity(intent);
+            }
+        }
+        else startActivity(new Intent(this,Login_Activity.class)); // User was not login in the past
+
+        /*
+        if(DB.isUserWasActive()) {
             // startActivity(new Intent(this,Manager_screen.class));
            startActivity(new Intent(this, Login_Activity.class));
             //startActivity(new Intent(this,IconTabsActivity.class));
@@ -49,7 +75,7 @@ public class MainActivity extends Activity {
         else
         {
             //startActivity(new Intent(this,LoginActivity.class));
-        }
+        }*/
     }
 
 }

@@ -40,6 +40,10 @@
                     android:src="@drawable/shift_id"
                     android:layout_column="1" />
 
+                <Space
+                    android:layout_width="20px"
+                    android:layout_height="20px" />
+
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="50dp"
@@ -163,7 +167,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:onClick="onClickSettings"
         android:background="@drawable/button"
-        android:textColor="#ffffff"
-        android:onClick="onClickSettings" />
+        android:textColor="#ffffff"/>
 </RelativeLayout>

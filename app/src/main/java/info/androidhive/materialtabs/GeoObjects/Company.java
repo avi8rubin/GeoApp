@@ -1,5 +1,7 @@
 package info.androidhive.materialtabs.GeoObjects;
 
+import android.content.ContentValues;
+
 import com.google.android.gms.vision.barcode.Barcode;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -7,6 +9,8 @@ import com.parse.ParseObject;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+
+import info.androidhive.materialtabs.common.Globals;
 
 /**
  * Created by zinoo on 31/05/2016.
@@ -98,5 +102,25 @@ public class Company implements Serializable {
 
     public void setCompanyAddress(String compantAddress) {
         CompanyAddress = compantAddress.trim();
+    }
+    public ContentValues getContentValues(){
+ /*       private static final String CompanyCode = "CompanyCode";
+        private static final String CompanyName = "CompanyName";
+        private static final String ManagerID = "ManagerID";
+        private static final String ManagerEmail = "ManagerEmail";
+        private static final String CompanyAddress = "CompanyAddress";
+        private static final String Location_LNG = "Location_LNG";
+        private static final String Location_LAT = "Location_LAT";
+        private static final String CreateDate = "CreateDate";*/
+        ContentValues CV = new ContentValues();
+        CV.put("CompanyCode",CompanyCode);
+        CV.put("CompanyName",CompanyName);
+        CV.put("ManagerID",ManagerID);
+        CV.put("ManagerEmail",ManagerEmail);
+        CV.put("CompanyAddress",CompanyAddress);
+        CV.put("Location_LAT",Location.getLatitude());
+        CV.put("Location_LNG",Location.getLongitude());
+        CV.put("CreateDate", Globals.getDateTimeToString(CreateDate));
+        return CV;
     }
 }

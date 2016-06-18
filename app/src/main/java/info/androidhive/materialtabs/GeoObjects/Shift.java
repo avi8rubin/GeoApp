@@ -1,12 +1,18 @@
 package info.androidhive.materialtabs.GeoObjects;
 
+import android.content.ContentValues;
+
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+
+import info.androidhive.materialtabs.common.Globals;
 import info.androidhive.materialtabs.common.Status;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by zinoo on 31/05/2016.
@@ -17,7 +23,7 @@ public class Shift implements Serializable {
     private String UserID;
     private String UserEmail;
     private Date EnterTime;
-    private Date ExitTime;
+    private Date ExitTime = null;
     private ParseGeoPoint EnterLocation = new ParseGeoPoint();
     private ParseGeoPoint ExitLocation = new ParseGeoPoint();
     private int ShiftStatus; //1=ENTER , 2=EXIT , 3=CLOSE
@@ -146,5 +152,23 @@ public class Shift implements Serializable {
     public void setExitTimeNow(){
         ExitTime = (Calendar.getInstance()).getTime();
         Duration = ExitTime.getTime() - EnterTime.getTime();
+    }
+
+
+    public ContentValues getContentValues(){
+        ContentValues CV = new ContentValues();
+        CV.put("SystemID",SystemID);
+        CV.put("CompanyCode",CompanyCode);
+        CV.put("UserID",UserID);
+        CV.put("UserEmail",UserEmail);
+        CV.put("EnterTime", Globals.getDateTimeToString(EnterTime));
+        CV.put("ExitTime",Globals.getDateTimeToString(ExitTime));
+        CV.put("EnterLocation_LAT",EnterLocation.getLatitude());
+        CV.put("EnterLocation_LNG",EnterLocation.getLongitude());
+        CV.put("ExitLocation_LAT",ExitLocation.getLatitude());
+        CV.put("ExitLocation_LNG",ExitLocation.getLongitude());
+        CV.put("ShiftStatus",ShiftStatus);
+        CV.put("Duration",Duration);
+        return CV;
     }
 }

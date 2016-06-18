@@ -63,7 +63,7 @@
             android:name=".activity.Manager_screen"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.createNewCompany" />
-        <activity android:name=".activity.ManagerSettings"></activity>
+        <activity android:name=".activity.ManagerSettings"/>
     </application>
 
 </manifest>

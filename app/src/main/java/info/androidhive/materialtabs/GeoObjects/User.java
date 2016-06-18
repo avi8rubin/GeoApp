@@ -1,5 +1,7 @@
 package info.androidhive.materialtabs.GeoObjects;
 
+import android.content.ContentValues;
+
 import info.androidhive.materialtabs.common.Status;
 
 import com.parse.ParseObject;
@@ -21,6 +23,7 @@ public class User implements Serializable {
     private String Role;
     private String CompanyName = "";
     private String CompanyCode = "";
+    private Boolean AutoLogin = false;
     private ArrayList<Shift> UserShifts= new ArrayList<Shift>();
 
     public User(){
@@ -135,5 +138,23 @@ public class User implements Serializable {
     }
     public Boolean hasID(){
         return !SystemID.equals("");
+    }
+    public void AutoLoginOn(){AutoLogin = true;}
+    public void AutoLoginOff(){AutoLogin = false;}
+    public Boolean getAutoLogin(){return AutoLogin;}
+
+    public ContentValues getContentValues(){
+        ContentValues CV = new ContentValues();
+        CV.put("SystemID",SystemID);
+        CV.put("Email",Email);
+        CV.put("Password",Password);
+        CV.put("FirstName",FirstName);
+        CV.put("LastName",LastName);
+        CV.put("UserTZ",UserID);
+        CV.put("Phone",Phone);
+        CV.put("Role",Role);
+        CV.put("CompanyName",CompanyName);
+        CV.put("CompanyCode",CompanyCode);
+        return CV;
     }
 }

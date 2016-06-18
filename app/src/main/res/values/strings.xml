@@ -83,6 +83,7 @@
     <string name="select_worker">Select Worker</string>
     <string name="login_automatically">Login Automatically</string>
     <string name="send_email_monthly_employees_rrating">Send email monthly employees rating</string>
+    <string name="company_code">Company Code</string>
 
 
 </resources>

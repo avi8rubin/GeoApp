@@ -173,6 +173,10 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
     public void onClickLogoutManager(View view) {
         startActivity(new Intent(this, Login_Activity.class));
     }
+    public void onClickSettings(View view){
+        Intent intent = new Intent(this, ManagerSettings.class);
+        startActivity(intent);
+    }
     private int getMonth(Date d){
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM");
         return Integer.parseInt(dateFormat.format(d));
@@ -291,8 +295,5 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         managerTable.addView(shiftRow);
     }
 
-    public void onClickSettings(View view){
-        Intent intent = new Intent(this,ManagerSettings.class);
-        startActivity(intent);
-    }
+
 }

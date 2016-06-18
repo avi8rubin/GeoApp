@@ -170,7 +170,7 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         }
         return super.onKeyDown(keyCode, event);
     }
-    public void on_click_logout_manager(View view) {
+    public void onClickLogoutManager(View view) {
         startActivity(new Intent(this, Login_Activity.class));
     }
     private int getMonth(Date d){
@@ -289,5 +289,10 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         shiftRow.addView(exitLocation);
         shiftRow.addView(duration);
         managerTable.addView(shiftRow);
+    }
+
+    public void onClickSettings(View view){
+        Intent intent = new Intent(this,ManagerSettings.class);
+        startActivity(intent);
     }
 }

@@ -1,0 +1,50 @@
+CREATE TABLE IF NOT EXISTS Company (
+  	CompanyCode VARCHAR (25) NOT NULL,
+  	CompanyName VARCHAR (50) NOT NULL,
+    ManagerID VARCHAR (25) NOT NULL,
+  	ManagerEmail VARCHAR (50) NOT NULL,
+  	CompanyAddress VARCHAR (50) NOT NULL,
+  	Location_LNG REAL,
+  	Location_LAT REAL,
+  	CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS User (
+	SystemID  VARCHAR (25) NOT NULL PRIMARY KEY,
+	Email VARCHAR (50) NOT NULL UNIQUE ,
+    Password VARCHAR (25) NOT NULL,
+    FirstName VARCHAR (25) NOT NULL,
+    LastName VARCHAR (25) NOT NULL,
+    UserTZ INTEGER NOT NULL ,
+    Phone VARCHAR (15) NOT NULL,
+    Role VARCHAR (15) NOT NULL,
+    CompanyName VARCHAR (50) NOT NULL,
+    CompanyCode VARCHAR (25) NOT NULL,
+  	AutoLogin BOOLEAN DEFAULT FALSE,
+  	FOREIGN KEY(CompanyName) REFERENCES Company(CompanyName),
+  	FOREIGN KEY(CompanyCode) REFERENCES Company(CompanyCode)
+);
+CREATE TABLE IF NOT EXISTS Shift (
+  	ShiftID INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
+  	SystemID VARCHAR (25) NOT NULL,
+  	CompanyCode VARCHAR (25) NOT NULL,
+  	UserID VARCHAR (25) NOT NULL,
+  	UserEmail VARCHAR (50),
+  	EnterTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+  	ExitTime DATETIME,
+  	EnterLocation_LNG REAL,
+  	EnterLocation_LAT REAL,
+  	ExitLocation_LNG REAL,
+  	ExitLocation_LAT REAL,
+  	ShiftStatus VARCHAR (15),
+  	Duration LONG,
+  	FOREIGN KEY(CompanyCode) REFERENCES Company(CompanyCode),
+  	FOREIGN KEY(UserID) REFERENCES User(SystemID),
+  	FOREIGN KEY(UserEmail) REFERENCES User(Email)
+);
+CREATE TABLE IF NOT EXISTS Settings (
+	LastUserID  VARCHAR (25) NOT NULL,
+	LastCompanyCode VARCHAR (25),
+	FOREIGN KEY(LastUserID) REFERENCES User(SystemID),
+  	FOREIGN KEY(LastCompanyCode) REFERENCES Company(CompanyCode)
+);
+

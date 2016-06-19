@@ -44,6 +44,14 @@ public class MainActivity extends Activity {
         DB = new GeoAppDBHelper(getApplicationContext());
         //this.deleteDatabase(DB.getDatabaseName());
         //DB = new GeoAppDBHelper(getApplicationContext());
+
+
+
+
+
+
+
+
         Object returnVal = DB.getLastLoginUser();
         if(returnVal instanceof User){  //Get user object back
             Intent intent;

@@ -274,7 +274,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         return getStandardUserFromCursor(c);
     }
     public void setLastLoginUser(User user){
-        if(!DB.isOpen() || DB.isReadOnly()) //Open connection to sqlite database if not already opened
+        if(DB==null || !DB.isOpen() || DB.isReadOnly()  ) //Open connection to sqlite database if not already opened
             DB = this.getWritableDatabase();
         DB.execSQL("DELETE FROM "+SETTINGS);
         ContentValues CV = new ContentValues();

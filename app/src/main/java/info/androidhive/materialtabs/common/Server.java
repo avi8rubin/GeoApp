@@ -273,6 +273,7 @@ public class Server {
 
         }
     }
+
     private static String saveAndGetObjectID(Company company) {
         final ParseObject po = company.getParseObject();
         //wait until objectID return
@@ -300,6 +301,7 @@ public class Server {
             else return null;
         }
     }
+
     private static String saveAndGetObjectID(Shift shift) {
         final ParseObject po = shift.getParseObject();
         //wait until objectID return
@@ -328,14 +330,31 @@ public class Server {
         }
     }
 
-    public static Object getLockObj(){
+    public static Object getLockObj() {
         return lockObj;
     }
-    private static void sleep(Long time){
+
+    private static void sleep(Long time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isComanyCodeValid(String company) {
+        List<ParseObject> result;
+        ParseQuery<ParseObject> query;
+        query = ParseQuery.getQuery(Users);
+        query.whereEqualTo("ComapanyCode", company.toString());
+        try {
+            result = query.find();
+            if (!result.isEmpty()) {
+                return true;
+            } else return false;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

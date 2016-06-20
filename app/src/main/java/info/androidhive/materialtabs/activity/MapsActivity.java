@@ -441,7 +441,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public String getShiftObjectIDFromParse() {
+    public String getShiftObjectIDFromParse() { //Server.getOpenShift()
         try {
             myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
             Cursor resultSet = myDB.rawQuery("SELECT SystemID FROM ShiftBuffer WHERE Shift_status=1;", null);
@@ -458,7 +458,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return "";
 
     }
-    public String getCurrentActiveEmailUser(){
+    public String getCurrentActiveEmailUser(){ //No need, you get intent, just open and save it in the activity creation.
         if (myDB == null)
             myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
         Cursor resultSet = myDB.rawQuery("SELECT Email,User_Password FROM Setting WHERE User_active=1;", null);
@@ -470,7 +470,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return "";
     }
-    public String getCurrentActiveIDUser(){
+    public String getCurrentActiveIDUser(){//No need, you get intent, just open and save it in the activity creation.
         if (myDB == null)
             myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
         Cursor resultSet = myDB.rawQuery("SELECT User_TZ FROM Setting WHERE User_active=1;", null);
@@ -483,7 +483,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return "";
     }
-    public String getCurrentActiveCompanycodeUser(){
+    public String getCurrentActiveCompanycodeUser(){//No need, you get intent, just open and save it in the activity creation.
         if (myDB == null)
             myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
         Cursor resultSet = myDB.rawQuery("SELECT User_Company_code FROM Setting WHERE User_active=1;", null);

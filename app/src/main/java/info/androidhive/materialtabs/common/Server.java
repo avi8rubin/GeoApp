@@ -96,12 +96,15 @@ public class Server {
         ParseQuery query = new ParseQuery(SHIFTS);
         Status status = shift.getShiftStatus();
         if (status == Status.ENTER) {
-            CloseAllOpenShifts();
+            DB.CloseAllOpenShifts(); //Close in the local DB
+            CloseAllOpenShifts(); //Close on server DB
             //Create new shift record
             shift.setSystemID(saveAndGetObjectID(shift));
+            DB.insert(shift);
         } else if (status == Status.EXIT) {
             if (shift.getSystemID().equals("")) return false;
             shift.setShiftStatus(Status.CLOSE);
+            DB.update(shift);
             //Update exit time in current shift
             try {
                 ParseObject o = query.get(shift.getSystemID());
@@ -116,6 +119,23 @@ public class Server {
 
         }
         return shift;
+    }
+    public static Object getOpenShift(){
+        List<ParseObject> result = null;
+        Object localShift;
+        if((localShift = DB.getOpenShift()) instanceof Shift)
+            return (Shift) localShift;
+        ParseQuery query = new ParseQuery(SHIFTS);
+        query.whereEqualTo("ShiftStatus", 1);
+        try {
+            //Get 'ENTER' shift
+            result = query.find();
+            if(result.isEmpty()) return false;
+            }
+        catch(ParseException e) {
+            e.printStackTrace();
+        }
+        return new Shift(result.get(0));
     }
     private static void CloseAllOpenShifts() {
         List<ParseObject> result = null;

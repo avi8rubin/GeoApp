@@ -109,13 +109,14 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
             myDB.execSQL(sqlQuery);
         }
     }
+
     public boolean isShiftActive(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM "+SHIFT+" WHERE "+ShiftStatus+" = 1;", null);
         res.moveToFirst();
         return res.getCount() > 0;
     }
-    public String get_User_Start_shift() {
+    public String get_User_Start_shift(){
         SQLiteDatabase db = this.getReadableDatabase();
             Cursor resultSet = db.rawQuery("SELECT " + EnterTime + " FROM " + SHIFT + " WHERE " + ShiftStatus + " = 1;", null);
             if (resultSet.getCount() > 0) {
@@ -131,66 +132,44 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     }
     public void EnterNewShift(String SystemID){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("INSERT INTO "+SHIFT+" VALUES(NULL,1,'" + time
                 + "',NULL,NULL,NULL,NULL,NULL,'"+SystemID+"');");
     }
     public void EnterNewShift(double lat,double lng,String SystemID){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("INSERT INTO "+SHIFT+""
                 + " VALUES(NULL,1,'" + time + "',NULL,'" + String.valueOf(lat)
                 + "','" + String.valueOf(lng)  + "',NULL,NULL,'"
                 +SystemID+"');");
     }
-    public void ExitShift()
-    {
+    public void ExitShift(){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("UPDATE "+SHIFT+" SET "+ShiftStatus+"=0 " +
                 ","+ExitTime+"='" + time + "',"+ExitLocation_LNG+"=NULL,"+ExitLocation_LAT+"=NULL WHERE "+ShiftStatus+"=1;");
     }
-    public void ExitShift(double lat,double lng)
-    {
+    public void ExitShift(double lat,double lng){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("UPDATE "+SHIFT+" SET "+ShiftStatus+"=0 " +
                 ","+ExitTime+"='"+time+"',"+ExitLocation_LNG+"="+String.valueOf(lat)+","+ExitLocation_LAT
                 +"="+String.valueOf(lng)+ "WHERE "+ShiftStatus+"=1;");
     }
-    public Date getShiftEnterTime()
-    {
+    public Date getShiftEnterTime(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor resultSet =db.rawQuery("SELECT " + EnterTime + " FROM "+SHIFT
                 + " WHERE " + ShiftStatus + "=1;", null);
         if (resultSet.getCount() > 0) {
             resultSet.moveToNext();
             String l = resultSet.getString(0);
-            return getDateTime(l);
+            return Globals.getStringToDateTime(l);
         }
         return new Date(System.currentTimeMillis()) ;
     }
 
 
-
-
-    public String getDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-    public Date getDateTime(String str){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = format.parse(str);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return date;
-    }
 
     public Cursor getAllRowsFromTable(String tableName){
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
@@ -332,8 +311,27 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
             company.setCompanyAddress(c.getString(4));
             company.setLocation(Double.valueOf(c.getInt(6)),Double.valueOf(c.getInt(5)));
             if(!Globals.isEmptyOrNull(c.getString(7)))
-                company.setCreateDate(getDateTime(c.getString(7)));
+                company.setCreateDate(Globals.getStringToDateTime(c.getString(7)));
             return company;
+        } else return false;
+    }
+    private Object getStandardShiftFromCursor(Cursor c){
+        if (c.getCount() > 0) {
+            Shift shift = new Shift();
+            c.moveToFirst();
+            shift.setSystemID(c.getString(c.getColumnIndex("SystemID")));
+            shift.setCompanyCode(c.getString(c.getColumnIndex("CompanyCode")));
+            shift.setUserID(c.getString(c.getColumnIndex("UserID")));
+            shift.setEnterTime(Globals.getStringToDateTime(c.getString(c.getColumnIndex("EnterTime"))));
+            shift.setExitTime(Globals.getStringToDateTime(c.getString(c.getColumnIndex("ExitTime"))));
+            shift.setEnterLocation(new ParseGeoPoint(c.getDouble(c.getColumnIndex("EnterLocation_LAT")),c.getDouble(c.getColumnIndex("EnterLocation_LNG"))));
+            shift.setExitLocation(new ParseGeoPoint(c.getDouble(c.getColumnIndex("ExitLocation_LAT")),c.getDouble(c.getColumnIndex("ExitLocation_LNG"))));
+            switch(c.getInt(c.getColumnIndex("ShiftStatus"))){
+                case 1: shift.setShiftStatus(Status.ENTER);break;
+                case 2: shift.setShiftStatus(Status.EXIT);break;
+                case 3: shift.setShiftStatus(Status.CLOSE);break;
+            }
+            return shift;
         } else return false;
     }
     public Object getCompanyByCompanyID(String CompanyID){
@@ -351,5 +349,16 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         ContentValues CV = new ContentValues();
         CV.put("AutoLogin",status);
         update(user,CV);
+    }
+    public Object getOpenShift(){
+        Cursor c = genericSelect(SHIFT,ALL,"ShiftStatus = ?",new String[]{"1"});
+        return getStandardShiftFromCursor(c);
+    }
+    public void CloseAllOpenShifts(){
+        ContentValues CV = new ContentValues();
+        CV.put("ExitTime",Globals.Now());
+        CV.putNull("ExitLocation_LNG");
+        CV.putNull("ExitLocation_LAT");
+        genericUpsert(SHIFT,CV,"ShiftStatus = ?",new String[]{"1"});
     }
 }

@@ -15,18 +15,19 @@ import info.androidhive.materialtabs.GeoObjects.Shift;
 import info.androidhive.materialtabs.GeoObjects.User;
 
 public class Server {
-    private static String Users = "Users";
-    private static String Company = "Company";
-    private static String Shifts = "Users_shifts";
+    private static String USERS = "Users";
+    private static String COMPANY = "Company";
+    private static String SHIFTS = "Users_shifts";
     private static String TAG = "Parse status: ";
     private static Object lockObj = new Object();
+    private static GeoAppDBHelper DB = new GeoAppDBHelper(Globals.GeoAppContext);
 
     public static Object CreateNewUser(User user) {
         List<ParseObject> result;
         ParseQuery<ParseObject> query;
         //check if user already exists
         String email = user.getEmail();
-        query = ParseQuery.getQuery(Users);
+        query = ParseQuery.getQuery(USERS);
         query.whereEqualTo("email", email);
         try {
             result = query.find();
@@ -41,13 +42,17 @@ public class Server {
         return user;
 
     }
-
     public static Object getUserDetails(User user) {
         List<ParseObject> result;
         ParseQuery<ParseObject> query;
         String password = user.getPassword();
         String email = user.getEmail();
-        query = ParseQuery.getQuery(Users);
+        //Check if was save in the local DB
+        Object LocalUser;
+        if((LocalUser = DB.select(user)) instanceof User)
+            return (User) LocalUser;
+        //Check if exists in the server
+        query = ParseQuery.getQuery(USERS);
         query.whereEqualTo("email", email.trim());
         try {
             result = query.find();
@@ -61,14 +66,13 @@ public class Server {
         }
         return "User Not Exists";
     }
-
     public static Object addNewCompany(User user, Company company) {
         List<ParseObject> result;
         ParseQuery<ParseObject> query;
         //Check if user is manager
         if (user.isWorker()) return "User role is not a manager in the system.";
         //Check if company already exists
-        query = ParseQuery.getQuery(Company);
+        query = ParseQuery.getQuery(COMPANY);
         query.whereEqualTo("Company_manager_email", user.getEmail());
         query.whereEqualTo("Company_name", company.getCompanyName());
         try {
@@ -87,10 +91,9 @@ public class Server {
         return company;
 
     }
-
     public static Object setShiftStatus(Shift shift) {
         List<ParseObject> result;
-        ParseQuery query = new ParseQuery(Shifts);
+        ParseQuery query = new ParseQuery(SHIFTS);
         Status status = shift.getShiftStatus();
         if (status == Status.ENTER) {
             CloseAllOpenShifts();
@@ -114,10 +117,9 @@ public class Server {
         }
         return shift;
     }
-
     private static void CloseAllOpenShifts() {
         List<ParseObject> result = null;
-        ParseQuery query = new ParseQuery(Shifts);
+        ParseQuery query = new ParseQuery(SHIFTS);
         query.whereEqualTo("ShiftStatus", 1);
         try {
             //Get all shifts are in status 'ENTER'
@@ -133,11 +135,10 @@ public class Server {
             e.printStackTrace();
         }
     }
-
     public static ArrayList<User> getCompanyWorkers(Company company) {
         List<ParseObject> result = null;
         ArrayList<User> users = new ArrayList<User>();
-        ParseQuery query = new ParseQuery(Users);
+        ParseQuery query = new ParseQuery(USERS);
         query.whereEqualTo("CompanyCode", company.getCompanyCode());
         query.whereEqualTo("user_role", "Worker");
         try {
@@ -152,14 +153,13 @@ public class Server {
         }
         return users;
     }
-
     public static ArrayList<User> getCompanyWorkers(User user) {
         List<ParseObject> result = null;
         ArrayList<User> users = new ArrayList<User>();
         //If the current user is not a manager
         if (user.getRole() == Status.WORKER)
             return users;
-        ParseQuery query = new ParseQuery(Users);
+        ParseQuery query = new ParseQuery(USERS);
         query.whereEqualTo("CompanyCode", user.getCompanyCode());
         query.addAscendingOrder("first_name");
         try {
@@ -175,9 +175,8 @@ public class Server {
         }
         return users;
     }
-
     public static User updateCompanyToUser(User user, Company company) {
-        ParseQuery query = new ParseQuery(Users);
+        ParseQuery query = new ParseQuery(USERS);
         try {
             ParseObject o = query.get(user.getSystemID());
             o.put("CompanyName", company.getCompanyName());
@@ -187,13 +186,13 @@ public class Server {
             e.printStackTrace();
             return user;
         }
+        DB.updateCompanyToUser(company,user);
         user.setCompanyName(company.getCompanyName());
         user.setCompanyCode(company.getCompanyCode());
         return user;
     }
-
     public static User getUserShifts(User user) {
-        ParseQuery query = new ParseQuery(Shifts);
+        ParseQuery query = new ParseQuery(SHIFTS);
         List<ParseObject> result = null;
         query.whereEqualTo("User_ID", user.getSystemID());
         query.addAscendingOrder("enter_time");
@@ -207,7 +206,6 @@ public class Server {
             user.addShift(new Shift(result.get(i)));
         return user;
     }
-
     public static ArrayList<User> getUserShifts(ArrayList<User> user) {
         ArrayList<User> UsersShifts = new ArrayList<User>();
         for (int i = 0; i < user.size(); i++) {
@@ -215,7 +213,6 @@ public class Server {
         }
         return UsersShifts;
     }
-
     public static ArrayList<User> getUserShifts(List<User> user) {
         ArrayList<User> UsersShifts = new ArrayList<User>();
         for (int i = 0; i < user.size(); i++) {
@@ -223,7 +220,6 @@ public class Server {
         }
         return UsersShifts;
     }
-
     private static String saveAndGetObjectID(User user) {
         final ParseObject po = user.getParseObject();
         //wait until objectID return
@@ -252,7 +248,6 @@ public class Server {
 
         }
     }
-
     private static String saveAndGetObjectID(Company company) {
         final ParseObject po = company.getParseObject();
         //wait until objectID return
@@ -280,7 +275,6 @@ public class Server {
             else return null;
         }
     }
-
     private static String saveAndGetObjectID(Shift shift) {
         final ParseObject po = shift.getParseObject();
         //wait until objectID return
@@ -308,11 +302,9 @@ public class Server {
             else return null;
         }
     }
-
     public static Object getLockObj() {
         return lockObj;
     }
-
     private static void sleep(Long time) {
         try {
             Thread.sleep(time);
@@ -320,11 +312,10 @@ public class Server {
             e.printStackTrace();
         }
     }
-
     public boolean isCompanyCodeValid(String company) {
         List<ParseObject> result;
         ParseQuery<ParseObject> query;
-        query = ParseQuery.getQuery(Users);
+        query = ParseQuery.getQuery(USERS);
         query.whereEqualTo("ComapanyCode", company.toString());
         try {
             result = query.find();
@@ -335,5 +326,26 @@ public class Server {
             e.printStackTrace();
         }
         return false;
+    }
+    public static Company getManagerCompany(User user){
+        if(Globals.isEmptyOrNull(user.getCompanyCode())) return null;
+        //Check if company exists in the local DB
+        Object companyLocal;
+        if((companyLocal = DB.select(new Company(user.getCompanyCode(),user.getCompanyName()))) instanceof Company)
+            return (Company) companyLocal;
+        //Get company from server
+        List<ParseObject> result = null;
+        ParseQuery query = new ParseQuery(COMPANY);
+        query.whereEqualTo("objectId", user.getCompanyCode());
+        try {
+            result = query.find();
+            if (!result.isEmpty()) return null;
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Company company = new Company(result.get(0));
+        DB.insert(company); //The company not exists in the local DB
+        return company;
     }
 }

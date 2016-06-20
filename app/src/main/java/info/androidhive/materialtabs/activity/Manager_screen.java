@@ -101,22 +101,11 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         managerTable = (TableLayout) findViewById(R.id.manager_table);
 
         Bundle extras = getIntent().getExtras();
-        if(extras.containsKey(Globals.EXTRA_COMPANY)) {
+        if(extras.containsKey(Globals.EXTRA_COMPANY))
             company = (Company) extras.getSerializable(Globals.EXTRA_COMPANY);
-        }
-        else{
-            company = new Company(Manager.getCompanyCode(),Manager.getCompanyName());
-        }
+        else
+            company = Server.getManagerCompany(Manager);
 
-
-        /*
-        managerTable.setColumnStretchable(0,true);
-        managerTable.setColumnStretchable(1,true);
-        managerTable.setColumnStretchable(2,true);
-        managerTable.setColumnStretchable(3,true);
-        managerTable.setColumnStretchable(4,true);
-        managerTable.setColumnStretchable(5,true);
-        */
         if(savedInstanceState != null){
             Month_number = savedInstanceState.getInt("Month_number");
             Year_number = savedInstanceState.getInt("Year_number");

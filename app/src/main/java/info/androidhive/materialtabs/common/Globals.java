@@ -1,5 +1,7 @@
 package info.androidhive.materialtabs.common;
 
+import android.content.Context;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -9,6 +11,7 @@ import java.util.Date;
 public class Globals {
     public static final String EXTRA_USER = "ExtraUserIntent";
     public static final String EXTRA_COMPANY = "ExtraCompanyIntent";
+    public static Context GeoAppContext;
 
     public static Boolean isEmptyOrNull(String str){
         if((str == null) || str.trim().equals("")) return true;

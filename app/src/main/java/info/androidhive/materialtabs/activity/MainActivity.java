@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Parse.initialize(this, "WNbaXzzXNTyvDefzEFKoaIxXcdfDUtuac2g8ZgDC", "Sa4HLlt21b4wfycwoPgnR9aKOXfAQonhloO1zWUS");
         DB = new GeoAppDBHelper(getApplicationContext());
+        Globals.GeoAppContext = getApplicationContext();
         Object returnVal = DB.getLastLoginUser();
         if(returnVal instanceof User){  //Get user object back
             Intent intent;

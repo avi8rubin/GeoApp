@@ -263,6 +263,10 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         Cursor c = genericSelect(USER,ALL,"Email = ?",new String[]{user.getEmail()});
         return getStandardUserFromCursor(c);
     }
+    public Object select(Company company){ //Get user object by email
+        Cursor c = genericSelect(COMPANY,ALL,"CompanyCode = ?",new String[]{company.getCompanyCode()});
+        return getStandardUserFromCursor(c);
+    }
     private void upsert(User user){
         Object result = select(user);
         if(result instanceof Boolean)
@@ -322,5 +326,12 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public Object getCompanyByCompanyID(String CompanyID){
         Cursor c = genericSelect(COMPANY,ALL,"CompanyCode = ?",new String[]{CompanyID});
         return getStandardCompanyFromCursor(c);
+    }
+    public void updateCompanyToUser(Company company, User user){
+        ContentValues CV = new ContentValues();
+        CV.put("CompanyName",company.getCompanyName());
+        CV.put("CompanyCode",company.getCompanyCode());
+        update(user,CV);
+        insert(company);
     }
 }

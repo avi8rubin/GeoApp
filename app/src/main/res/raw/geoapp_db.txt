@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS Company (
   	CompanyName VARCHAR (50) NOT NULL,
     ManagerID VARCHAR (25) NOT NULL,
   	ManagerEmail VARCHAR (50) NOT NULL,
-  	CompanyAddress VARCHAR (50) NOT NULL,
+  	CompanyAddress VARCHAR (50),
   	Location_LNG REAL,
   	Location_LAT REAL,
   	CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP

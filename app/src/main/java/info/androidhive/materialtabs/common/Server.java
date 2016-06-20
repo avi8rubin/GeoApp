@@ -339,7 +339,7 @@ public class Server {
         query.whereEqualTo("objectId", user.getCompanyCode());
         try {
             result = query.find();
-            if (!result.isEmpty()) return null;
+            if (result.isEmpty()) return null;
 
         } catch (ParseException e) {
             e.printStackTrace();

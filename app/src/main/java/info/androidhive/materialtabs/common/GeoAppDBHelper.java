@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
@@ -206,31 +207,46 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
      * @return return the number of rows that affected or the new row number in the table
      */
     private int genericUpsert (String tableName, ContentValues CV, String Where, String[] WhereValues){
-        if(DB==null || !DB.isOpen() || DB.isReadOnly()) //Open connection to sqlite database if not already opened
+        if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
+            DB = this.getWritableDatabase();
+        if(DB.isReadOnly())
             DB = this.getWritableDatabase();
         //Check if object already exists
-        if(Globals.isEmptyOrNull(Where)){
+        if(Globals.isEmptyOrNull(Where)) {
             // Insert new row
-            return (int)DB.insert(tableName,null,CV);
+            try {
+                return (int) DB.insertOrThrow(tableName, null, CV);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         else{
             // Update exists row
             return DB.update(tableName,CV,Where,WhereValues);
         }
+        return 0;
     }
     private Cursor genericSelect(String tableName, String[] columnName, String whereStatement,String[] WhereValues){
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
             DB = this.getReadableDatabase();
         SQLQuery = "SELECT "+Globals.stringArrayToString(columnName,",")+" FROM "+tableName+" ";
         try {
-            if (!Globals.isEmptyOrNull(whereStatement))
+            if (!Globals.isEmptyOrNull(whereStatement)) {
+                //TODO: STRING QUERY
+                String sTest = SQLQuery + "WHERE " + whereStatement + ";";
                 return DB.rawQuery(SQLQuery + "WHERE " + whereStatement + ";", WhereValues);
+            }
             else return DB.rawQuery(SQLQuery + ";", null);
         }
         catch(Exception e){
             e.printStackTrace();
         }
         return null;
+    }
+    private void upsert(User user){
+        Object result = select(user);
+        if(result instanceof Boolean)
+            insert(user);
     }
     public void insert(User user){
         genericUpsert(USER,user.getContentValues(),null,null);
@@ -265,13 +281,9 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     }
     public Object select(Company company){ //Get user object by email
         Cursor c = genericSelect(COMPANY,ALL,"CompanyCode = ?",new String[]{company.getCompanyCode()});
-        return getStandardUserFromCursor(c);
+        return getStandardCompanyFromCursor(c);
     }
-    private void upsert(User user){
-        Object result = select(user);
-        if(result instanceof Boolean)
-            insert(user);
-    }
+
     public Object getLastLoginUser(){
         String SQLQuery = "SELECT A.* FROM User A JOIN Settings B ON A.SystemID=B.LastUserID";
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
@@ -282,7 +294,8 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public void setLastLoginUser(User user){
         if(DB==null || !DB.isOpen() || DB.isReadOnly()  ) //Open connection to sqlite database if not already opened
             DB = this.getWritableDatabase();
-        DB.execSQL("DELETE FROM "+SETTINGS);
+        try{   DB.execSQL("DELETE FROM "+SETTINGS);}
+        catch(SQLException e){e.printStackTrace();}
         upsert(user);
         ContentValues CV = new ContentValues();
         CV.put("LastUserID",user.getSystemID());
@@ -333,5 +346,10 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         CV.put("CompanyCode",company.getCompanyCode());
         update(user,CV);
         insert(company);
+    }
+    public void updateUserAutoLogin(User user, Boolean status){
+        ContentValues CV = new ContentValues();
+        CV.put("AutoLogin",status);
+        update(user,CV);
     }
 }

@@ -156,6 +156,7 @@ public class User implements Serializable {
         CV.put("Role",Role);
         CV.put("CompanyName",CompanyName);
         CV.put("CompanyCode",CompanyCode);
+        CV.put("AutoLogin",AutoLogin);
         return CV;
     }
 }

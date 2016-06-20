@@ -18,7 +18,7 @@ public class Company implements Serializable {
     private String CompanyName;
     private String ManagerID;
     private String ManagerEmail;
-    private String CompanyAddress;
+    private String CompanyAddress = "";
     private Double Location_LAT;
     private Double Location_LNG;
     private Date CreateDate;
@@ -104,7 +104,8 @@ public class Company implements Serializable {
     }
 
     public void setCompanyAddress(String companyAddress) {
-        CompanyAddress = companyAddress.trim();
+        if(companyAddress == null) CompanyAddress = null;
+        else CompanyAddress = companyAddress.trim();
     }
     public ContentValues getContentValues(){
         ContentValues CV = new ContentValues();
@@ -112,7 +113,8 @@ public class Company implements Serializable {
         CV.put("CompanyName",CompanyName);
         CV.put("ManagerID",ManagerID);
         CV.put("ManagerEmail",ManagerEmail);
-        CV.put("CompanyAddress",CompanyAddress);
+        if(CompanyAddress == null) CV.putNull("CompanyAddress");
+        else CV.put("CompanyAddress",CompanyAddress);
         CV.put("Location_LAT",Location_LAT);
         CV.put("Location_LNG",Location_LNG);
         CV.put("CreateDate", Globals.getDateTimeToString(CreateDate));

@@ -33,7 +33,7 @@ import info.androidhive.materialtabs.common.ReadFile;
 import info.androidhive.materialtabs.common.Server;
 
 public class MainActivity extends Activity {
-    public GeoAppDBHelper  DB;
+    private GeoAppDBHelper  DB;
     public MainActivity() {
         DB = null;
     }

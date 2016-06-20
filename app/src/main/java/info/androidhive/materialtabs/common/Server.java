@@ -321,7 +321,7 @@ public class Server {
         }
     }
 
-    public boolean isComanyCodeValid(String company) {
+    public boolean isCompanyCodeValid(String company) {
         List<ParseObject> result;
         ParseQuery<ParseObject> query;
         query = ParseQuery.getQuery(Users);

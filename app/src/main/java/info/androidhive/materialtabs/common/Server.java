@@ -1,7 +1,6 @@
 package info.androidhive.materialtabs.common;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -10,11 +9,8 @@ import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ThreadFactory;
 
 import info.androidhive.materialtabs.GeoObjects.Company;
-import info.androidhive.materialtabs.GeoObjects.ParseObjects;
 import info.androidhive.materialtabs.GeoObjects.Shift;
 import info.androidhive.materialtabs.GeoObjects.User;
 
@@ -56,8 +52,7 @@ public class Server {
         try {
             result = query.find();
             if (!result.isEmpty()) {
-                ParseObjects.setParseObject(result.get(0),user);
-                //user.setParseObject(result.get(0));
+                user.setParseObject(result.get(0));
                 if (user.getPassword().equals(password)) return user;
                 else return "Wrong Password";
             }
@@ -87,24 +82,6 @@ public class Server {
         company.setManagerID(user.getSystemID());
         company.setManagerEmail(user.getEmail());
         company.setCompanyCode(saveAndGetObjectID(company));
-
-        /*
-        try {
-            company.ParseObjects().save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //Get company ID and return company object
-        query = ParseQuery.getQuery(Company);
-        query.whereEqualTo("Company_manager_email", company.getManagerEmail());
-        query.whereEqualTo("Company_name", company.getCompanyName());
-        try {
-            result = query.find();
-            company.setCompanyCode(result.get(0).getString("objectId"));
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
         //Update manager connection to company
         updateCompanyToUser(user, company);
         return company;
@@ -171,9 +148,7 @@ public class Server {
         }
         //Close all those shifts, status 'CLOSE'
         for (int i = 0; result != null && i < result.size(); i++) {
-            User user = new User();
-            users.add(ParseObjects.setParseObject(result.get(i),user));
-            //users.add(new User(result.get(i)));
+            users.add(new User(result.get(i)));
         }
         return users;
     }
@@ -187,7 +162,6 @@ public class Server {
         ParseQuery query = new ParseQuery(Users);
         query.whereEqualTo("CompanyCode", user.getCompanyCode());
         query.addAscendingOrder("first_name");
-        //query.whereEqualTo("user_role","Worker");
         try {
             //Get all users that work in relevant company
             result = query.find();
@@ -197,9 +171,7 @@ public class Server {
         //Close all those shifts, status 'CLOSE'
         for (int i = 0; result != null && i < result.size(); i++) {
             if (result.get(i).getString("user_role").equals("Manager")) continue;
-            User userBack = new User();
-            users.add(ParseObjects.setParseObject(result.get(i),userBack));
-            //users.add(new User(result.get(i)));
+            users.add(new User(result.get(i)));
         }
         return users;
     }
@@ -253,8 +225,7 @@ public class Server {
     }
 
     private static String saveAndGetObjectID(User user) {
-        //final ParseObject po = user.getParseObject();
-        final ParseObject po = ParseObjects.getParseObject(user);
+        final ParseObject po = user.getParseObject();
         //wait until objectID return
         synchronized (lockObj) {
             po.saveInBackground(new SaveCallback() {
@@ -283,8 +254,7 @@ public class Server {
     }
 
     private static String saveAndGetObjectID(Company company) {
-        //final ParseObject po = company.getParseObject();
-        final ParseObject po = ParseObjects.getParseObject(company);
+        final ParseObject po = company.getParseObject();
         //wait until objectID return
         synchronized (lockObj) {
             po.saveInBackground(new SaveCallback() {

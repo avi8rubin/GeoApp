@@ -28,8 +28,6 @@ public class Shift implements Serializable {
     private Double EnterLocation_LNG;
     private Double ExitLocation_LAT;
     private Double ExitLocation_LNG;
-    //private ParseGeoPoint EnterLocation = new ParseGeoPoint();
-    //private ParseGeoPoint ExitLocation = new ParseGeoPoint();
     private int ShiftStatus; //1=ENTER , 2=EXIT , 3=CLOSE
     private long Duration;
 
@@ -44,8 +42,6 @@ public class Shift implements Serializable {
         EnterLocation_LNG = 0.0;
         ExitLocation_LAT = 0.0;
         ExitLocation_LNG = 0.0;
-        //EnterLocation = new ParseGeoPoint();
-        //ExitLocation = new ParseGeoPoint();
         ShiftStatus=0; //1=ENTER , 2=EXIT , 3=CLOSE
         Duration=0;
     }

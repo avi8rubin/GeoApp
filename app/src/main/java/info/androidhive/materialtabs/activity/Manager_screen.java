@@ -51,7 +51,8 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_screen);
-        Manager = (User) getIntent().getSerializableExtra(Globals.EXTRA_USER);
+        if(getIntent().getExtras().containsKey(Globals.EXTRA_USER))
+            Manager = (User) getIntent().getSerializableExtra(Globals.EXTRA_USER);
         try {
             Workers = new AsyncTaskGetCompanyWorkers().execute(Manager).get();
             new AsyncTaskGetWorkersShifts().execute(Workers);
@@ -175,6 +176,8 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
     }
     public void onClickSettings(View view){
         Intent intent = new Intent(this, ManagerSettings.class);
+        //intent.putExtra(Globals.EXTRA_USER,Manager);
+        //intent.putExtra(Globals.EXTRA_COMPANY,company);
         startActivity(intent);
     }
     private int getMonth(Date d){

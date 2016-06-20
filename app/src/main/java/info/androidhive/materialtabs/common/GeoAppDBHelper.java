@@ -201,7 +201,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAllRowsFromTable(String tableName){
-        if(!DB.isOpen()) //Open connection to sqlite database if not already opened
+        if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
             DB = this.getReadableDatabase();
         return DB.rawQuery("SELECT * FROM ?;", new String[]{tableName});
     }
@@ -215,7 +215,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
      * @return return the number of rows that affected or the new row number in the table
      */
     private int genericUpsert (String tableName, ContentValues CV, String Where, String[] WhereValues){
-        if(!DB.isOpen() || DB.isReadOnly()) //Open connection to sqlite database if not already opened
+        if(DB==null || !DB.isOpen() || DB.isReadOnly()) //Open connection to sqlite database if not already opened
             DB = this.getWritableDatabase();
         //Check if object already exists
         if(Globals.isEmptyOrNull(Where)){
@@ -228,7 +228,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         }
     }
     private Cursor genericSelect(String tableName, String[] columnName, String whereStatement,String[] WhereValues){
-        if(!DB.isOpen()) //Open connection to sqlite database if not already opened
+        if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
             DB = this.getReadableDatabase();
         SQLQuery = "SELECT "+Globals.stringArrayToString(columnName,",")+" FROM "+tableName+" ";
         if(Globals.isEmptyOrNull(whereStatement))
@@ -268,8 +268,8 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     }
     public Object getLastLoginUser(){
         String SQLQuery = "SELECT A.* FROM User A JOIN Settings B ON A.SystemID=B.LastUserID";
-        //if(!DB.isOpen()) //Open connection to sqlite database if not already opened
-/**/            DB = this.getReadableDatabase();
+        if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
+           DB = this.getReadableDatabase();
         Cursor c = DB.rawQuery(SQLQuery,null);
         return getStandardUserFromCursor(c);
     }
@@ -300,5 +300,24 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
             if(c.getInt(10) > 0) user.AutoLoginOn();
             return user;
         } else return false;
+    }
+    private Object getStandardCompanyFromCursor(Cursor c){
+        if (c.getCount() > 0) {
+            Company company = new Company();
+            c.moveToFirst();
+            company.setCompanyCode(c.getString(0));
+            company.setCompanyName(c.getString(1));
+            company.setManagerID(c.getString(2));
+            company.setManagerEmail(c.getString(3));
+            company.setCompanyAddress(c.getString(4));
+            company.setLocation(new ParseGeoPoint(c.getInt(6),c.getInt(5)));
+            if(!Globals.isEmptyOrNull(c.getString(7)))
+                company.setCreateDate(getDateTime(c.getString(7)));
+            return company;
+        } else return false;
+    }
+    public Object getCompanyByCompanyID(String CompanyID){
+        Cursor c = genericSelect(COMPANY,ALL,"CompanyCode = ?",new String[]{CompanyID});
+        return getStandardCompanyFromCursor(c);
     }
 }

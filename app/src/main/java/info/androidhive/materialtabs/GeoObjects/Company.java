@@ -68,6 +68,7 @@ public class Company implements Serializable {
     public Date getCreateDate() {
         return CreateDate;
     }
+    public void setCreateDate(Date createDate){ CreateDate = createDate;}
 
     public String getManagerEmail() {
         return ManagerEmail;

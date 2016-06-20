@@ -175,6 +175,8 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
     }
     public void onClickSettings(View view){
         Intent intent = new Intent(this, ManagerSettings.class);
+        intent.putExtra(Globals.EXTRA_USER,Manager);
+        intent.putExtra(Globals.EXTRA_COMPANY,company);
         startActivity(intent);
     }
     private int getMonth(Date d){

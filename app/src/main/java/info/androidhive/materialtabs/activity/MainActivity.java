@@ -23,6 +23,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import info.androidhive.materialtabs.GeoObjects.Company;
 import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
 
@@ -59,6 +60,9 @@ public class MainActivity extends Activity {
             if(user.getAutoLogin() && user.isManager()) { //User is manager and have auto login settings and
                 intent = new Intent(this, Manager_screen.class);
                 intent.putExtra(Globals.EXTRA_USER,user);
+                Object ManagerCompany;
+                if((ManagerCompany = DB.getCompanyByCompanyID(user.getCompanyCode())) instanceof Company)
+                    intent.putExtra(Globals.EXTRA_COMPANY,(Company)ManagerCompany);
                 startActivity(intent);
             }
             else if (user.getAutoLogin() && user.isWorker()) { //User is worker and have auto login settings and

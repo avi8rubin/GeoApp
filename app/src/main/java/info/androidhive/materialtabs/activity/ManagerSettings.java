@@ -1,5 +1,6 @@
 package info.androidhive.materialtabs.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.CompoundButton;
@@ -37,8 +38,8 @@ public class ManagerSettings extends AppCompatActivity implements OnCheckedChang
         CompanyCode = (TextView) findViewById(R.id.companyCode);
         CompanyName = (TextView) findViewById(R.id.companyName);
         AutoLogin = (Switch) findViewById(R.id.autoLoginS);
-        AutoLogin.setOnCheckedChangeListener(this);
         if(Manager.getAutoLogin()) AutoLogin.setChecked(true);
+        AutoLogin.setOnCheckedChangeListener(this);
         SendEmail = (Switch) findViewById(R.id.sendEmailS);
         CompanyCode.setText(company.getCompanyCode());
         CompanyName.setText(company.getCompanyName());
@@ -49,8 +50,17 @@ public class ManagerSettings extends AppCompatActivity implements OnCheckedChang
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if(isChecked){
             DB.updateUserAutoLogin(Manager,true);
+            Manager.AutoLoginOn();
         }else{
             DB.updateUserAutoLogin(Manager,false);
+            Manager.AutoLoginOff();
         }
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Manager_screen.class);
+        intent.putExtra(Globals.EXTRA_USER,Manager);
+        intent.putExtra(Globals.EXTRA_COMPANY,company);
+        startActivity(intent);
     }
 }

@@ -22,6 +22,10 @@ public class Globals {
     }
     public static String stringArrayToString(String[] str, String separator){
         String returnStr = "";
+        if(str[0]==null)
+            return null;
+        if(str.length<2)
+            return str[0];
         for (String s : str) {
             returnStr = returnStr+str+separator;
         }

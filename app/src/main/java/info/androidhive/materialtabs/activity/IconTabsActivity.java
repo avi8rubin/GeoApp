@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -343,7 +344,6 @@ public class IconTabsActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
     public void on_click_logout(View view){
-        //TODO update exit
         startActivity(new Intent(this, Login_Activity.class));
     }
     public void on_click_company_code(View view){

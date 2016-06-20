@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,7 +59,7 @@ public class Login_Activity extends AppCompatActivity {
             Error.setText((String)returnObject);
         else {
             currentUser = (User) returnObject;
-            DB.setLastLoginUser(currentUser);
+
             Intent ActivityByRole;
             if (currentUser.isWorker())
                 ActivityByRole = new Intent(this, IconTabsActivity.class);
@@ -116,8 +117,8 @@ public class Login_Activity extends AppCompatActivity {
             Email.setText(user.getEmail());
             Password.setText(user.getPassword());
         }
-
         Error.setText("");
+
         Logo = (ImageView) findViewById(R.id.imageView8);
         //get_new_current_user();
 

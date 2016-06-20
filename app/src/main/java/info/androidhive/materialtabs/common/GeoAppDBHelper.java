@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import com.parse.ParseGeoPoint;
 
@@ -90,7 +91,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public GeoAppDBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         //SQLQuery = ReadFile.getStringFromFile(context.getResources().openRawResource(R.raw.sqlite_db_geoapp));
-        context.deleteDatabase(DB_NAME);
+       // context.deleteDatabase(DB_NAME);
         SQLQuery = ReadFile.getStringFromFile(context.getResources().openRawResource(R.raw.geoapp_db));
     }
 
@@ -169,7 +170,7 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public Date getShiftEnterTime()
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor resultSet =db.rawQuery("SELECT " + EnterTime + " FROM "+SHIFT
+        Cursor resultSet =db.rawQuery("SELECT " + EnterTime + " FROM " + SHIFT
                 + " WHERE " + ShiftStatus + "=1;", null);
         if (resultSet.getCount() > 0) {
             resultSet.moveToNext();
@@ -230,11 +231,19 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     private Cursor genericSelect(String tableName, String[] columnName, String whereStatement,String[] WhereValues){
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
             DB = this.getReadableDatabase();
-        SQLQuery = "SELECT "+Globals.stringArrayToString(columnName,",")+" FROM "+tableName+" ";
-        if(Globals.isEmptyOrNull(whereStatement))
-            return DB.rawQuery(SQLQuery+whereStatement+";",WhereValues);
+            SQLQuery = "SELECT "+Globals.stringArrayToString(columnName,",")+" FROM "+tableName+" ";
+        if(!Globals.isEmptyOrNull(whereStatement)) {
+            try {
+                return DB.rawQuery(SQLQuery + "WHERE " + whereStatement + ";", WhereValues);
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
         else return DB.rawQuery(SQLQuery+";",null);
+        return null;
     }
+
     public void insert(User user){
         genericUpsert(USER,user.getContentValues(),null,null);
     }
@@ -262,6 +271,13 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public void update(Shift shift, ContentValues CV){
         genericUpsert(SHIFT,CV,"SystemID = ?",new String[]{shift.getSystemID()});
     }
+    public void upsert (User user){
+        Object return_user = select(user);
+        if(return_user instanceof Boolean) // need to insert
+        {
+            insert(user);
+        }
+    }
     public Object select(User user){ //Get user object by email
         Cursor c = genericSelect(USER,ALL,"Email = ?",new String[]{user.getEmail()});
         return getStandardUserFromCursor(c);
@@ -276,7 +292,9 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public void setLastLoginUser(User user){
         if(DB==null || !DB.isOpen() || DB.isReadOnly()  ) //Open connection to sqlite database if not already opened
             DB = this.getWritableDatabase();
-        DB.execSQL("DELETE FROM "+SETTINGS);
+        //DB.execSQL("DELETE FROM "+SETTINGS);
+        DB.delete(SETTINGS,null,null);
+        upsert(user);
         ContentValues CV = new ContentValues();
         CV.put("LastUserID",user.getSystemID());
         CV.put("LastCompanyCode",user.getCompanyCode());

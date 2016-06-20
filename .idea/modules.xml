@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/GeoAppM.iml" filepath="$PROJECT_DIR$/GeoAppM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GeoApp.iml" filepath="$PROJECT_DIR$/GeoApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

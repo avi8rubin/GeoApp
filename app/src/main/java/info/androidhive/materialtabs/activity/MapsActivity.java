@@ -16,14 +16,11 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,26 +28,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.GetCallback;
-import com.parse.ParseACL;
-import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseSession;
-import com.parse.SaveCallback;
 
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import info.androidhive.materialtabs.GeoObjects.Shift;
 import info.androidhive.materialtabs.R;
+import info.androidhive.materialtabs.common.GeoAppDBHelper;
 import info.androidhive.materialtabs.common.Server;
 import info.androidhive.materialtabs.common.Status;
-import info.androidhive.materialtabs.common.User_callback;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -74,7 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private CountDownTimer MsgTimer1;
     private SQLiteDatabase myDB;
     private boolean is_Enter_screen;
-    private User_callback Current_user;
+    public GeoAppDBHelper DB;
     public MapsActivity() {
     }
 
@@ -256,6 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
+        DB = new GeoAppDBHelper(getApplicationContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -325,7 +315,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param view
      */
     public void Onclick_Enter(View view){
-
+        try {
         currentShift = new Shift();
         currentShift.setEnterTimeNow();
         currentShift.setUserEmail(getCurrentActiveEmailUser());
@@ -334,32 +324,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentShift.setEnterLocation(new ParseGeoPoint(lat, lng));
         currentShift.setShiftStatus(Status.ENTER);
         currentShift = (Shift) Server.setShiftStatus(currentShift);
-        /*
-        String SystemID="";
-        try {
-            ParseObject parseObject = currentShift.getParseObject();
-            parseObject.save();
-            SystemID= parseObject.getObjectId();
-            SystemID= currentShift.getParseObject().getObjectId();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-*/
-
-
-        try {
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            String time = getDateTime();
-            myDB.execSQL("INSERT INTO ShiftBuffer VALUES(NULL,1,'" + time + "',NULL,'" + lat.toString() + "','" + lng.toString() + "',NULL,NULL,'"+currentShift.getSystemID()+"');");
-            Intent i = new Intent(this,IconTabsActivity.class);
-            myDB.close();
-            startActivity(i);
-
+            DB.EnterNewShift(lat, lng, currentShift.getSystemID());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        startActivity(new Intent(this, IconTabsActivity.class));
     }
 
     /**
@@ -368,7 +339,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param view
      */
     public void Onclicl_Enter_anyway(View view){
-
+        try{
         currentShift = new Shift();
         currentShift.setEnterTimeNow();
         currentShift.setUserEmail(getCurrentActiveEmailUser());
@@ -377,25 +348,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentShift.setEnterLocation(new ParseGeoPoint(lat, lng));
         currentShift.setShiftStatus(Status.ENTER);
         currentShift = (Shift) Server.setShiftStatus(currentShift);
+
         Server.setShiftStatus(currentShift);
-        /*
-        String SystemID="";
-        try {
-            ParseObject parseObject = shift.getParseObject();
-            parseObject.save();
-            SystemID= parseObject.getObjectId();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
-
-        try {
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            String time = getDateTime();
-            myDB.execSQL("INSERT INTO ShiftBuffer VALUES(NULL,1,'" + time + "',NULL,NULL,NULL,NULL,NULL,'"+currentShift.getSystemID()+"');");
-            Intent i = new Intent(this,IconTabsActivity.class);
-            myDB.close();
-            startActivity(i);
-
+        DB.EnterNewShift(currentShift.getSystemID());
         }
         catch (Exception e)
         {
@@ -411,31 +366,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void Onclick_Exit(View view){
 
-        ParseQuery query = new ParseQuery("Users_Shifts");
-        ParseObject o = null;
         try {
-            o = query.get(getShiftObjectIDFromParse());
-            Date date = new Date();
-            date.setTime(System.currentTimeMillis());
-            o.put("exit_time", date);
-            o.put("ExitLocationLongitude", lat);
-            o.put("ExitLocationLatitude", lng);
-            o.save();
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            String time = getDateTime();
-            myDB.execSQL("UPDATE ShiftBuffer SET Shift_status=0 " +
-                    ",shift_end_time='"+time+"',shift_exit_lng="+lat.toString()+",shift_exit_lat="+lng.toString()+"\n" +
-                    "WHERE Shift_status=1;");
-            Intent i = new Intent(this,IconTabsActivity.class);
-            myDB.close();
-            startActivity(i);
+            currentShift = new Shift();
+            currentShift.setEnterTime(DB.getShiftEnterTime());
+            currentShift.setExitTimeNow();
+            currentShift.setUserEmail(getCurrentActiveEmailUser());
+            currentShift.setUserID(getCurrentActiveIDUser());
+            currentShift.setCompanyCode(getCurrentActiveCompanycodeUser());
+            currentShift.setShiftStatus(Status.EXIT);
+            String str = getShiftObjectIDFromParse();
+            currentShift.setSystemID(str);
+            Server.setShiftStatus(currentShift);
+            DB.ExitShift(lat, lng);
+            startActivity(new Intent(this,IconTabsActivity.class));
         }
         catch (Exception e)
         {
@@ -449,75 +392,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void Onclick_Exit_anyway(View view){
 
-        Shift shift = new Shift();
-        Date date = new Date();
-        date.setTime(System.currentTimeMillis());
-        shift.setExitTime(date);
-        shift.setUserEmail(getCurrentActiveEmailUser());
-        shift.setUserID(getCurrentActiveIDUser());
-        shift.setCompanyCode(getCurrentActiveCompanycodeUser());
-        shift.setShiftStatus(Status.EXIT);
-        String str = getShiftObjectIDFromParse();
-        //shift.setSystemID(str);
-        Server.setShiftStatus(shift);
-
-/*
-        ParseQuery query = new ParseQuery("Users_Shifts");
-        ParseObject o = null;
-        try {
-            String str = getShiftObjectIDFromParse();
-            query.whereEqualTo("objectId",str);
-            query.getFirstInBackground(new GetCallback() {
-                public void done(ParseObject frat, ParseException e) {
-                    if (e != null && frat != null) {
-                        Date date = new Date();
-                        date.setTime(System.currentTimeMillis());
-                        frat.put("exit_time", date);
-                        frat.put("ExitLocationLongitude", "");
-                        frat.put("ExitLocationLatitude", "");
-                        frat.saveInBackground();
-                    } else {
-                        Log.w("fat","error");
-                    }
-
-                }
-            });
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        */
-        //ParseObject o =ParseObject.createWithoutData("Users_Shifts",getShiftObjectIDFromParse());
-        //ParseQuery
-        //Date date = new Date();
-        //date.setTime(System.currentTimeMillis());
-        //o.put("exit_time", date);
-        // o.put("ExitLocationLongitude", "");
-        // o.put("ExitLocationLatitude", "");
-
         try
-
         {
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            String time = getDateTime();
-            myDB.execSQL("UPDATE ShiftBuffer SET Shift_status=0 " +
-                    ",shift_end_time='" + time + "',shift_exit_lng=NULL,shift_exit_lat=NULL WHERE Shift_status=1;");
-            Intent i = new Intent(this, IconTabsActivity.class);
-            myDB.close();
-            startActivity(i);
+            currentShift = new Shift();
+            currentShift.setEnterTime(DB.getShiftEnterTime());
+            currentShift.setExitTimeNow();
+            currentShift.setUserEmail(getCurrentActiveEmailUser());
+            currentShift.setUserID(getCurrentActiveIDUser());
+            currentShift.setCompanyCode(getCurrentActiveCompanycodeUser());
+            currentShift.setShiftStatus(Status.EXIT);
+            String str = getShiftObjectIDFromParse();
+            currentShift.setSystemID(str);
+            Server.setShiftStatus(currentShift);
+            DB.ExitShift();
+            startActivity(new Intent(this, IconTabsActivity.class));
         }
-
-        catch(
-                Exception e
-                )
-
+        catch(Exception e)
         {
             e.printStackTrace();
         }
-
-        startActivity(new Intent(this, IconTabsActivity.class)
-
-        );
     }
 
     /**

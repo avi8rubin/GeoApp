@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadFactory;
 
 import info.androidhive.materialtabs.GeoObjects.Company;
+import info.androidhive.materialtabs.GeoObjects.ParseObjects;
 import info.androidhive.materialtabs.GeoObjects.Shift;
 import info.androidhive.materialtabs.GeoObjects.User;
 
@@ -39,8 +40,10 @@ public class Server {
             e.printStackTrace();
         }
         // Create new user, save it in parse and get the id
-        user.setSystemID(saveAndGetObjectID(user));
+        String userID = saveAndGetObjectID(user);
+        user.setSystemID(userID);
         return user;
+
     }
 
     public static Object getUserDetails(User user) {
@@ -53,7 +56,8 @@ public class Server {
         try {
             result = query.find();
             if (!result.isEmpty()) {
-                user.setParseObject(result.get(0));
+                ParseObjects.setParseObject(result.get(0),user);
+                //user.setParseObject(result.get(0));
                 if (user.getPassword().equals(password)) return user;
                 else return "Wrong Password";
             }
@@ -86,7 +90,7 @@ public class Server {
 
         /*
         try {
-            company.getParseObject().save();
+            company.ParseObjects().save();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -166,8 +170,11 @@ public class Server {
             e.printStackTrace();
         }
         //Close all those shifts, status 'CLOSE'
-        for (int i = 0; result != null && i < result.size(); i++)
-            users.add(new User(result.get(i)));
+        for (int i = 0; result != null && i < result.size(); i++) {
+            User user = new User();
+            users.add(ParseObjects.setParseObject(result.get(i),user));
+            //users.add(new User(result.get(i)));
+        }
         return users;
     }
 
@@ -190,7 +197,9 @@ public class Server {
         //Close all those shifts, status 'CLOSE'
         for (int i = 0; result != null && i < result.size(); i++) {
             if (result.get(i).getString("user_role").equals("Manager")) continue;
-            users.add(new User(result.get(i)));
+            User userBack = new User();
+            users.add(ParseObjects.setParseObject(result.get(i),userBack));
+            //users.add(new User(result.get(i)));
         }
         return users;
     }
@@ -244,7 +253,8 @@ public class Server {
     }
 
     private static String saveAndGetObjectID(User user) {
-        final ParseObject po = user.getParseObject();
+        //final ParseObject po = user.getParseObject();
+        final ParseObject po = ParseObjects.getParseObject(user);
         //wait until objectID return
         synchronized (lockObj) {
             po.saveInBackground(new SaveCallback() {
@@ -264,13 +274,17 @@ public class Server {
         }
         //set objectID to user object
         synchronized (lockObj) {
+            while (po.getObjectId() == null) sleep((long) 100);
             if (po.getObjectId() != null)
                 return po.getObjectId();
             else return null;
+
         }
     }
+
     private static String saveAndGetObjectID(Company company) {
-        final ParseObject po = company.getParseObject();
+        //final ParseObject po = company.getParseObject();
+        final ParseObject po = ParseObjects.getParseObject(company);
         //wait until objectID return
         synchronized (lockObj) {
             po.saveInBackground(new SaveCallback() {
@@ -278,23 +292,25 @@ public class Server {
                 public void done(ParseException e) {
                     if (e == null) {
                         // Saved successfully.
-                        Log.d(TAG, "User update saved!");
+                        Log.d(TAG, "Company update saved!");
                         String id = po.getObjectId();
                         Log.d(TAG, "The object id is: " + id);
                     } else {
                         // The save failed.
-                        Log.d(TAG, "User update error: " + e);
+                        Log.d(TAG, "Company update error: " + e);
                     }
                 }
             });
         }
         //set objectID to user object
         synchronized (lockObj) {
+            while (po.getObjectId() == null) sleep((long) 100);
             if (po.getObjectId() != null)
                 return po.getObjectId();
             else return null;
         }
     }
+
     private static String saveAndGetObjectID(Shift shift) {
         final ParseObject po = shift.getParseObject();
         //wait until objectID return
@@ -316,10 +332,38 @@ public class Server {
         }
         //set objectID to user object
         synchronized (lockObj) {
+            while (po.getObjectId() == null) sleep((long) 100);
             if (po.getObjectId() != null)
                 return po.getObjectId();
             else return null;
         }
     }
 
+    public static Object getLockObj() {
+        return lockObj;
+    }
+
+    private static void sleep(Long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isComanyCodeValid(String company) {
+        List<ParseObject> result;
+        ParseQuery<ParseObject> query;
+        query = ParseQuery.getQuery(Users);
+        query.whereEqualTo("ComapanyCode", company.toString());
+        try {
+            result = query.find();
+            if (!result.isEmpty()) {
+                return true;
+            } else return false;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

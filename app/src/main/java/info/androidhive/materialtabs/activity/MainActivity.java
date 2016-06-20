@@ -23,91 +23,71 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import info.androidhive.materialtabs.GeoObjects.Company;
+import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
 
+import info.androidhive.materialtabs.common.GeoAppDBHelper;
+import info.androidhive.materialtabs.common.Globals;
 import info.androidhive.materialtabs.common.ReadFile;
 import info.androidhive.materialtabs.common.Server;
 
 public class MainActivity extends Activity {
-
-    private static boolean firstRun = true;
-    private SQLiteDatabase myDB;
-    private BroadcastReceiver mReceiver;
-    boolean isBound = false;//
-    BroadcastReceiver receiver;
-    private MainActivity thisActivity = this;
-
+    public GeoAppDBHelper  DB;
+    public MainActivity() {
+        DB = null;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         Parse.initialize(this, "WNbaXzzXNTyvDefzEFKoaIxXcdfDUtuac2g8ZgDC", "Sa4HLlt21b4wfycwoPgnR9aKOXfAQonhloO1zWUS");
+        DB = new GeoAppDBHelper(getApplicationContext());
+        //this.deleteDatabase(DB.getDatabaseName());
+        //DB = new GeoAppDBHelper(getApplicationContext());
 
 
-        //------DB Start------///
-        if (firstRun) {
-            start_DB();
-            firstRun = false;
-        }
-        init();
 
 
-    }
 
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-       // init();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ///init();
-    }
-    public void start_DB() {
 
-        try {
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            String sql_script = ReadFile.getStringFromFile(getResources().openRawResource(R.raw.sqlite_db_geoapp));
-            String[] query_array = sql_script.split(";");
-            for (int i = 0; i < query_array.length; i++) {
-                // One SQL per Time
-                myDB.execSQL(query_array[i]);
+
+        Object returnVal = DB.getLastLoginUser();
+        if(returnVal instanceof User){  //Get user object back
+            Intent intent;
+            User user = (User) returnVal;
+            if(user.getAutoLogin() && user.isManager()) { //User is manager and have auto login settings and
+                intent = new Intent(this, Manager_screen.class);
+                intent.putExtra(Globals.EXTRA_USER,user);
+                Object ManagerCompany;
+                if((ManagerCompany = DB.getCompanyByCompanyID(user.getCompanyCode())) instanceof Company)
+                    intent.putExtra(Globals.EXTRA_COMPANY,(Company)ManagerCompany);
+                startActivity(intent);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            else if (user.getAutoLogin() && user.isWorker()) { //User is worker and have auto login settings and
+                intent = new Intent(this, IconTabsActivity.class);
+                intent.putExtra(Globals.EXTRA_USER,user);
+                startActivity(intent);
+            }
+            else {//User not check auto login in settings screen
+                intent = new Intent(this, Login_Activity.class);
+                intent.putExtra(Globals.EXTRA_USER,user);
+                startActivity(intent);
+            }
         }
-    }
+        else startActivity(new Intent(this,Login_Activity.class)); // User was not login in the past
 
-    public void init() {
-        //TODO Check if there is allready user loged? Yes-Check shift status  else-Login screen;
-
-        //User Was Active - Send To App Screen & Get Shift info
-        if(User_Was_Active())
-        {
-            myDB.close();
-           // startActivity(new Intent(this,Manager_screen.class));
-            startActivity(new Intent(this,Login_Activity.class));
+        /*
+        if(DB.isUserWasActive()) {
+            // startActivity(new Intent(this,Manager_screen.class));
+           startActivity(new Intent(this, Login_Activity.class));
             //startActivity(new Intent(this,IconTabsActivity.class));
-
         }
         else
         {
-           //startActivity(new Intent(this,LoginActivity.class));
-        }
+            //startActivity(new Intent(this,LoginActivity.class));
+        }*/
     }
-
-    public boolean User_Was_Active()
-    {
-        if(myDB==null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet= myDB.rawQuery("SELECT * FROM Setting WHERE User_active = 1;", null);
-        return resultSet.getCount()>0;
-    }
-
 
 }

@@ -40,6 +40,10 @@
                     android:src="@drawable/shift_id"
                     android:layout_column="1" />
 
+                <Space
+                    android:layout_width="20px"
+                    android:layout_height="20px" />
+
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="50dp"
@@ -86,8 +90,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false"
         android:background="@color/background_material_light" />
 
     <TextView
@@ -142,7 +144,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="on_click_logout_manager"
         android:background="@drawable/button"
         android:textColor="#ffffff" />
 
@@ -166,5 +167,5 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@drawable/button"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"/>
 </RelativeLayout>

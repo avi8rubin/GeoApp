@@ -47,4 +47,7 @@
     <string name="error_field_required">שדה זה הינו שדה חובה</string>
     <string name="select_worker">בחר עובד</string>
     <string name="logout">יציאה</string>
+    <string name="login_automatically">כניסה אוטומטית </string>
+    <string name="send_email_monthly_employees_rrating">שלח דירוג עובדים חודשי לאימייל</string>
+    <string name="company_code">קוד החברה</string>
 </resources>

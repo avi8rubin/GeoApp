@@ -55,17 +55,17 @@ public class createNewCompany extends AppCompatActivity {
             errorMsg.setText(R.string.company_empty_name);
         else{
             company.setCompanyName(companyName.getText().toString().trim());
-            company.setCompantAddress(companyAddress.getText().toString().trim());
+            company.setCompanyAddress(companyAddress.getText().toString().trim());
             company.setManagerEmail(manager.getEmail().trim());
             company.setManagerID(manager.getSystemID().trim());
             try{
-                company.setLocation(new ParseGeoPoint(
+                company.setLocation(
                         Double.valueOf(companyLatitude.getText().toString().trim()),
-                        Double.valueOf(companyLongitud.getText().toString().trim())
+                        Double.valueOf(companyLongitud.getText().toString().trim()
                 ));
             }
             catch (Exception e){
-                company.setLocation(null);
+                company.setLocation(0.0,0.0);
             }
 
             Object result = Server.addNewCompany(manager,company);

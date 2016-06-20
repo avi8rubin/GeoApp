@@ -1,12 +1,12 @@
 package info.androidhive.materialtabs.GeoObjects;
 
-import com.google.android.gms.vision.barcode.Barcode;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
+import android.content.ContentValues;
 
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+
+import info.androidhive.materialtabs.common.Globals;
 
 /**
  * Created by zinoo on 31/05/2016.
@@ -16,8 +16,9 @@ public class Company implements Serializable {
     private String CompanyName;
     private String ManagerID;
     private String ManagerEmail;
-    private String CompantAddress;
-    private ParseGeoPoint Location;
+    private String CompanyAddress;
+    private Double Location_LAT;
+    private Double Location_LNG;
     private Date CreateDate;
 
     public Company(){}
@@ -25,9 +26,9 @@ public class Company implements Serializable {
         this.CompanyCode = CompanyCode;
         this.CompanyName = CompanyName;
     }
-    public Company(ParseObject po){
+    /*public Company(ParseObject po){
         setParseObject(po);
-    }
+    }*/
 
     public String getCompanyCode() {
         return CompanyCode;
@@ -53,17 +54,19 @@ public class Company implements Serializable {
         ManagerID = managerID.trim();
     }
 
-    public ParseGeoPoint getLocation() {
-        return Location;
+    public Double[] getLocation() {
+        return new Double[]{Location_LAT,Location_LNG};
     }
 
-    public void setLocation(ParseGeoPoint location) {
-        Location = location;
+    public void setLocation(Double location_LAT, Double location_LNG) {
+        Location_LAT = location_LAT;
+        Location_LNG = location_LNG;
     }
 
     public Date getCreateDate() {
         return CreateDate;
     }
+    public void setCreateDate(Date createDate){ CreateDate = createDate;}
 
     public String getManagerEmail() {
         return ManagerEmail;
@@ -73,30 +76,45 @@ public class Company implements Serializable {
         ManagerEmail = managerEmail.trim();
     }
 
-    public ParseObject getParseObject(){
+/*    public ParseObject getParseObject(){
         ParseObject po = new ParseObject("Company");
         po.put("Company_manager_email",ManagerEmail);
         po.put("Company_name",CompanyName);
-        po.put("CompantAddress",CompantAddress);
-        if(Location != null) po.put("Company_Geo_Point",Location);
+        po.put("CompanyAddress",CompanyAddress);
+        po.put("Location_LAT",Location_LAT);
+        po.put("Location_LNG",Location_LNG);
         po.put("Manager_ID",ManagerID);
         return po;
-    }
-    public void setParseObject(ParseObject po){
+    }*/
+    /*public void setParseObject(ParseObject po){
         CompanyCode = po.getObjectId();
         ManagerEmail = po.getString("Company_manager_email");
         CompanyName = po.getString("Company_name");
-        CompantAddress = po.getString("CompantAddress");
-        Location = po.getParseGeoPoint("Company_Geo_Point");
+        CompanyAddress = po.getString("CompanyAddress");
+        Location_LAT = po.getDouble("Location_LAT");
+        Location_LNG = po.getDouble("Location_LNG");
         ManagerID = po.getString("Manager_ID");
         CreateDate = po.getCreatedAt();
+    }*/
+
+    public String getCompanyAddress() {
+        return CompanyAddress;
     }
 
-    public String getCompantAddress() {
-        return CompantAddress;
+    public void setCompanyAddress(String companyAddress) {
+        CompanyAddress = companyAddress.trim();
+    }
+    public ContentValues getContentValues(){
+        ContentValues CV = new ContentValues();
+        CV.put("CompanyCode",CompanyCode);
+        CV.put("CompanyName",CompanyName);
+        CV.put("ManagerID",ManagerID);
+        CV.put("ManagerEmail",ManagerEmail);
+        CV.put("CompanyAddress",CompanyAddress);
+        CV.put("Location_LAT",Location_LAT);
+        CV.put("Location_LNG",Location_LNG);
+        CV.put("CreateDate", Globals.getDateTimeToString(CreateDate));
+        return CV;
     }
 
-    public void setCompantAddress(String compantAddress) {
-        CompantAddress = compantAddress.trim();
-    }
 }

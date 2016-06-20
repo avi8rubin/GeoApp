@@ -15,9 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -29,8 +27,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
-import info.androidhive.materialtabs.common.User_callback;
+import info.androidhive.materialtabs.common.GeoAppDBHelper;
+import info.androidhive.materialtabs.common.Globals;
 import info.androidhive.materialtabs.fragments.FourFragment;
 import info.androidhive.materialtabs.fragments.OneFragment;
 import info.androidhive.materialtabs.fragments.ThreeFragment;
@@ -51,38 +51,34 @@ public class IconTabsActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private boolean first_time_flag;
     private boolean shift_status;
-    private String Shift_start_Time;
-    private ArrayList<String> arrayList;
-    private ArrayAdapter<String> adapter;
-    private EditText txtInput;
+    public GeoAppDBHelper DB;
     private int Month_number;
     private int Year_number;
-    private  CalendarView calendar;
-    private User_callback Current_User ;
+    private User Current_User ;
     private  int[] tabIcons = {R.drawable.loction,R.drawable.history,R.drawable.setting1};
     private  int[] tabHIcons = {R.drawable.h_loction,R.drawable.h_history,R.drawable.h_setting1};
     private SQLiteDatabase myDB;
+    private String Shift_start_Time;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_icon_tabs);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        Current_User =new User();
+        Current_User =(User)getIntent().getSerializableExtra(Globals.EXTRA_USER);
+        DB = new GeoAppDBHelper(getApplicationContext());
 
         Calendar cal = Calendar.getInstance();
         Month_number = cal.get(Calendar.MONTH);
         Year_number = cal.get(Calendar.YEAR);
 
-        Current_User =new User_callback();
-        Current_User =(User_callback)getIntent().getSerializableExtra("user");
 
 
-
-        if(User_Shift_Active())
+        if(DB.isShiftActive())
         {
             shift_status=true;
-            Shift_start_Time=get_User_Start_shift();
+            Shift_start_Time=DB.get_User_Start_shift();
         }
         else
         {
@@ -95,34 +91,11 @@ public class IconTabsActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
-        setup_Comapny_code();
 
-    }
 
-    public boolean User_Shift_Active(){
-        if(myDB==null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet= myDB.rawQuery("SELECT * FROM ShiftBuffer WHERE Shift_status = 1;", null);
-        resultSet.moveToNext();
-        return resultSet.getCount()>0;
-    }
-    public String get_User_Start_shift() {
-        try {
-            if (myDB == null)
-                myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            Cursor resultSet = myDB.rawQuery("SELECT shift_start_time FROM ShiftBuffer Shift_status = 1;", null);
-            if (resultSet.getCount() > 0) {
-                resultSet.moveToNext();
-                String l = resultSet.getString(0);
-
-                return l;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
     }
     private void setupTabIcons() {
+
         if(first_time_flag){
             first_time_flag=false;
             tabLayout.getTabAt(0).setIcon(tabHIcons[0]);
@@ -135,12 +108,6 @@ public class IconTabsActivity extends AppCompatActivity {
     private  void setupTabHihgIcons(int pos){
         tabLayout.getTabAt(pos).setIcon(tabHIcons[pos]);
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     private void setupViewPager(final ViewPager viewPager) {
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
@@ -175,7 +142,8 @@ public class IconTabsActivity extends AppCompatActivity {
                 if (position == 2) {
                     Company_code_btn = (Button) findViewById(R.id.company_code_btn);
                     Company_code_input = (EditText) findViewById(R.id.company_code_input);
-                    if (!Company_Current_code.equals("")) {
+                    Company_Current_code = Current_User.getCompanyCode();
+                    if (!Company_Current_code.equals("")) {  //Null Pointer
                         Company_code_input.setText(Company_Current_code);
                         Company_code_btn.setText(R.string.edit_comapny_code);
                     } else {
@@ -228,14 +196,12 @@ public class IconTabsActivity extends AppCompatActivity {
     public void onclick_enter(View view){
         Intent i = new Intent(this, MapsActivity.class);
         i.putExtra("EnterOrExit", "Enter");
-        myDB.close();
         startActivity(i);
 
     }
     public void onclick_exit(View view){
         Intent i = new Intent(this, MapsActivity.class);
         i.putExtra("EnterOrExit", "Exit");
-        myDB.close();
         startActivity(i);
 
     }
@@ -251,9 +217,7 @@ public class IconTabsActivity extends AppCompatActivity {
         table.removeViews(1, table.getChildCount() - 1);
 
         try {
-            if (myDB == null)
-                myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            Cursor resultSet = myDB.rawQuery("SELECT * FROM ShiftBuffer ;", null);
+            Cursor resultSet =DB.getShift();
             int number_of_row=resultSet.getCount();
             if (number_of_row> 0) {
                 resultSet.moveToNext();
@@ -374,12 +338,16 @@ public class IconTabsActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
     public void on_click_logout(View view){
-        //TODO uddate exit
-        myDB.close();
+        //TODO update exit
         startActivity(new Intent(this, Login_Activity.class));
     }
     public void on_click_company_code(View view){
-        if(!Company_Current_code.equals("")) // Edit
+
+        //TODO Check Company code if valid!!!
+     ////????????????/ if(Server.isComanyCodeValid(Company_code_input.getText().toString());
+
+
+        if (!Company_Current_code.equals("")) // Edit
         {
             Company_Current_code="";
             Company_code_btn.setText(R.string.enter_comapny_code);
@@ -404,30 +372,6 @@ public class IconTabsActivity extends AppCompatActivity {
 
         }
 
-
-    }
-    public void setup_Comapny_code() {
-        // if user has code
-
-        try {
-            if (myDB == null)
-                myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            Cursor resultSet = myDB.rawQuery("SELECT * FROM Setting WHERE User_Company_active=1 ;", null);
-            int number_of_row = resultSet.getCount();
-            if (number_of_row > 0) {
-                resultSet.moveToNext();
-
-                //TODO enter
-                String s1 = resultSet.getString(8).toString();
-                Company_Current_code=s1;
-            }
-            else
-            {
-                Company_Current_code="";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 

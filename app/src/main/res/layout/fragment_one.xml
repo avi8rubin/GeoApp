@@ -22,7 +22,8 @@
             android:layout_above="@+id/enter_to_shift_msg"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="28dp"
-            android:background="@drawable/button" />
+            android:background="@drawable/button"
+            android:textColor="#ffffff" />
 
     <TextView
         android:layout_width="fill_parent"

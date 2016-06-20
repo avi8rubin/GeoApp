@@ -51,7 +51,8 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_screen);
-        Manager = (User) getIntent().getSerializableExtra(Globals.EXTRA_USER);
+        if(getIntent().getExtras().containsKey(Globals.EXTRA_USER))
+            Manager = (User) getIntent().getSerializableExtra(Globals.EXTRA_USER);
         try {
             Workers = new AsyncTaskGetCompanyWorkers().execute(Manager).get();
             new AsyncTaskGetWorkersShifts().execute(Workers);
@@ -170,8 +171,14 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         }
         return super.onKeyDown(keyCode, event);
     }
-    public void on_click_logout_manager(View view) {
+    public void onClickLogoutManager(View view) {
         startActivity(new Intent(this, Login_Activity.class));
+    }
+    public void onClickSettings(View view){
+        Intent intent = new Intent(this, ManagerSettings.class);
+        intent.putExtra(Globals.EXTRA_USER,Manager);
+        intent.putExtra(Globals.EXTRA_COMPANY,company);
+        startActivity(intent);
     }
     private int getMonth(Date d){
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM");
@@ -290,4 +297,6 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         shiftRow.addView(duration);
         managerTable.addView(shiftRow);
     }
+
+
 }

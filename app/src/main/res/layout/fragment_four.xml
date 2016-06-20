@@ -21,7 +21,7 @@
         android:layout_centerHorizontal="true"
         android:nestedScrollingEnabled="false"
         android:background="@drawable/button"
-        />
+        android:textColor="#ffffff" />
 
     <TextView
         android:layout_width="fill_parent"

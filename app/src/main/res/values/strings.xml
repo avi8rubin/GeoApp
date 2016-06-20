@@ -68,7 +68,7 @@
     <string name="login">Login</string>
     <string name="signin">SignIn</string>
     <string name="email_exist">Email all ready exist</string>
-    <string name="setting">Setting</string>
+    <string name="setting">Settings</string>
     <string name="logout">Logout</string>
     <string name="enter_comapny_code">Enter comapny code</string>
     <string name="edit_comapny_code">Edit Comapny code</string>
@@ -81,6 +81,9 @@
     <string name="company_empty_name">Must to fill at least company name field.</string>
     <string name="company_created">Company was created.</string>
     <string name="select_worker">Select Worker</string>
+    <string name="login_automatically">Login Automatically</string>
+    <string name="send_email_monthly_employees_rrating">Send email monthly employees rating</string>
+    <string name="company_code">Company Code</string>
 
 
 </resources>

@@ -22,7 +22,7 @@ public class ManagerSettings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manager_settings);
-        Manager = (User) getIntent().getSerializableExtra(Globals.EXTRA_USER);
+/*        Manager = (User) getIntent().getSerializableExtra(Globals.EXTRA_USER);
         Bundle extras = getIntent().getExtras();
         if(extras.containsKey(Globals.EXTRA_COMPANY)) {
             company = (Company) extras.getSerializable(Globals.EXTRA_COMPANY);
@@ -33,6 +33,6 @@ public class ManagerSettings extends AppCompatActivity {
         CompanyCode = (TextView) findViewById(R.id.companyCode);
         CompanyName = (TextView) findViewById(R.id.companyName);
         CompanyCode.setText(company.getCompanyCode());
-        CompanyName.setText(company.getCompanyName());
+        CompanyName.setText(company.getCompanyName());*/
     }
 }

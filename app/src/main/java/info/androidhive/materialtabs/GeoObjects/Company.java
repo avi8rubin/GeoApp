@@ -1,6 +1,8 @@
 package info.androidhive.materialtabs.GeoObjects;
 
 import android.content.ContentValues;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.android.gms.vision.barcode.Barcode;
 import com.parse.ParseGeoPoint;
@@ -21,7 +23,9 @@ public class Company implements Serializable {
     private String ManagerID;
     private String ManagerEmail;
     private String CompanyAddress;
-    private ParseGeoPoint Location;
+    private Double Location_LAT;
+    private Double Location_LNG;
+    //private ParseGeoPoint Location;
     private Date CreateDate;
 
     public Company(){}
@@ -58,11 +62,12 @@ public class Company implements Serializable {
     }
 
     public ParseGeoPoint getLocation() {
-        return Location;
+        return new ParseGeoPoint(Location_LAT,Location_LNG);
     }
 
     public void setLocation(ParseGeoPoint location) {
-        Location = location;
+        Location_LAT = location.getLatitude();
+        Location_LNG = location.getLongitude();
     }
 
     public Date getCreateDate() {
@@ -82,8 +87,8 @@ public class Company implements Serializable {
         ParseObject po = new ParseObject("Company");
         po.put("Company_manager_email",ManagerEmail);
         po.put("Company_name",CompanyName);
-        po.put("CompantAddress",CompanyAddress);
-        if(Location != null) po.put("Company_Geo_Point",Location);
+        po.put("CompanyAddress",CompanyAddress);
+        if(Location_LAT != null || Location_LAT!=0) po.put("Company_Geo_Point",getLocation());
         po.put("Manager_ID",ManagerID);
         return po;
     }
@@ -91,8 +96,9 @@ public class Company implements Serializable {
         CompanyCode = po.getObjectId();
         ManagerEmail = po.getString("Company_manager_email");
         CompanyName = po.getString("Company_name");
-        CompanyAddress = po.getString("CompantAddress");
-        Location = po.getParseGeoPoint("Company_Geo_Point");
+        CompanyAddress = po.getString("CompanyAddress");
+        ParseGeoPoint Location = po.getParseGeoPoint("Company_Geo_Point");
+        if(Location != null) setLocation(Location);
         ManagerID = po.getString("Manager_ID");
         CreateDate = po.getCreatedAt();
     }
@@ -101,27 +107,20 @@ public class Company implements Serializable {
         return CompanyAddress;
     }
 
-    public void setCompanyAddress(String compantAddress) {
-        CompanyAddress = compantAddress.trim();
+    public void setCompanyAddress(String companyAddress) {
+        CompanyAddress = companyAddress.trim();
     }
     public ContentValues getContentValues(){
- /*       private static final String CompanyCode = "CompanyCode";
-        private static final String CompanyName = "CompanyName";
-        private static final String ManagerID = "ManagerID";
-        private static final String ManagerEmail = "ManagerEmail";
-        private static final String CompanyAddress = "CompanyAddress";
-        private static final String Location_LNG = "Location_LNG";
-        private static final String Location_LAT = "Location_LAT";
-        private static final String CreateDate = "CreateDate";*/
         ContentValues CV = new ContentValues();
         CV.put("CompanyCode",CompanyCode);
         CV.put("CompanyName",CompanyName);
         CV.put("ManagerID",ManagerID);
         CV.put("ManagerEmail",ManagerEmail);
         CV.put("CompanyAddress",CompanyAddress);
-        CV.put("Location_LAT",Location.getLatitude());
-        CV.put("Location_LNG",Location.getLongitude());
+        CV.put("Location_LAT",Location_LAT);
+        CV.put("Location_LNG",Location_LNG);
         CV.put("CreateDate", Globals.getDateTimeToString(CreateDate));
         return CV;
     }
+
 }

@@ -16,14 +16,11 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,18 +28,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.GetCallback;
-import com.parse.ParseACL;
-import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseSession;
-import com.parse.SaveCallback;
 
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -51,7 +40,6 @@ import info.androidhive.materialtabs.R;
 import info.androidhive.materialtabs.common.GeoAppDBHelper;
 import info.androidhive.materialtabs.common.Server;
 import info.androidhive.materialtabs.common.Status;
-import info.androidhive.materialtabs.common.User_callback;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -75,7 +63,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private CountDownTimer MsgTimer1;
     private SQLiteDatabase myDB;
     private boolean is_Enter_screen;
-    private User_callback Current_user;
     public GeoAppDBHelper DB;
     public MapsActivity() {
     }

@@ -1,13 +1,9 @@
 package info.androidhive.materialtabs.GeoObjects;
 
 import android.content.ContentValues;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.design.internal.ParcelableSparseArray;
+
 
 import info.androidhive.materialtabs.common.Status;
-
-import com.parse.ParseObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,9 +27,9 @@ public class User implements Serializable {
 
     public User(){
     }
-    public User(ParseObject po){
+    /*public User(ParseObject po){
         setParseObject(po);
-    }
+    }*/
     public void addShift(Shift shift){
         UserShifts.add(shift);
     }
@@ -93,7 +89,7 @@ public class User implements Serializable {
     public String getSystemID() {
         return SystemID;
     }
-    public ParseObject getParseObject(){
+/*    public ParseObject getParseObject(){
         final ParseObject po = new ParseObject("Users");
         po.put("email",Email);
         po.put("user_password",Password);
@@ -105,8 +101,8 @@ public class User implements Serializable {
         po.put("CompanyName",CompanyName);
         po.put("CompanyCode",CompanyCode);
         return po;
-    }
-    public void setParseObject(ParseObject po){
+    }*/
+    /*public void setParseObject(ParseObject po){
         SystemID = po.getObjectId();
         Email = po.getString("email");
         Password = po.getString("user_password");
@@ -117,7 +113,7 @@ public class User implements Serializable {
         Role = po.getString("user_role");
         CompanyName = po.getString("CompanyName");
         CompanyCode = po.getString("CompanyCode");
-    }
+    }*/
     public String getCompanyName() {
         return CompanyName;
     }

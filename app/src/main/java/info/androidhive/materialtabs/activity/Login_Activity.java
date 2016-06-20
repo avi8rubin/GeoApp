@@ -1,15 +1,10 @@
 package info.androidhive.materialtabs.activity;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -22,7 +17,6 @@ import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.common.GeoAppDBHelper;
 import info.androidhive.materialtabs.common.Globals;
 import info.androidhive.materialtabs.common.Server;
-import info.androidhive.materialtabs.common.User_callback;
 
 public class Login_Activity extends AppCompatActivity {
 
@@ -59,7 +53,7 @@ public class Login_Activity extends AppCompatActivity {
             Error.setText((String)returnObject);
         else {
             currentUser = (User) returnObject;
-
+            DB.setLastLoginUser(currentUser);
             Intent ActivityByRole;
             if (currentUser.isWorker())
                 ActivityByRole = new Intent(this, IconTabsActivity.class);
@@ -117,8 +111,8 @@ public class Login_Activity extends AppCompatActivity {
             Email.setText(user.getEmail());
             Password.setText(user.getPassword());
         }
-        Error.setText("");
 
+        Error.setText("");
         Logo = (ImageView) findViewById(R.id.imageView8);
         //get_new_current_user();
 

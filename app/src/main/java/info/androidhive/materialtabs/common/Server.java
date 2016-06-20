@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadFactory;
 
 import info.androidhive.materialtabs.GeoObjects.Company;
+import info.androidhive.materialtabs.GeoObjects.ParseObjects;
 import info.androidhive.materialtabs.GeoObjects.Shift;
 import info.androidhive.materialtabs.GeoObjects.User;
 
@@ -55,7 +56,8 @@ public class Server {
         try {
             result = query.find();
             if (!result.isEmpty()) {
-                user.setParseObject(result.get(0));
+                ParseObjects.setParseObject(result.get(0),user);
+                //user.setParseObject(result.get(0));
                 if (user.getPassword().equals(password)) return user;
                 else return "Wrong Password";
             }
@@ -88,7 +90,7 @@ public class Server {
 
         /*
         try {
-            company.getParseObject().save();
+            company.ParseObjects().save();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -168,8 +170,11 @@ public class Server {
             e.printStackTrace();
         }
         //Close all those shifts, status 'CLOSE'
-        for (int i = 0; result != null && i < result.size(); i++)
-            users.add(new User(result.get(i)));
+        for (int i = 0; result != null && i < result.size(); i++) {
+            User user = new User();
+            users.add(ParseObjects.setParseObject(result.get(i),user));
+            //users.add(new User(result.get(i)));
+        }
         return users;
     }
 
@@ -192,7 +197,9 @@ public class Server {
         //Close all those shifts, status 'CLOSE'
         for (int i = 0; result != null && i < result.size(); i++) {
             if (result.get(i).getString("user_role").equals("Manager")) continue;
-            users.add(new User(result.get(i)));
+            User userBack = new User();
+            users.add(ParseObjects.setParseObject(result.get(i),userBack));
+            //users.add(new User(result.get(i)));
         }
         return users;
     }
@@ -246,7 +253,8 @@ public class Server {
     }
 
     private static String saveAndGetObjectID(User user) {
-        final ParseObject po = user.getParseObject();
+        //final ParseObject po = user.getParseObject();
+        final ParseObject po = ParseObjects.getParseObject(user);
         //wait until objectID return
         synchronized (lockObj) {
             po.saveInBackground(new SaveCallback() {
@@ -275,7 +283,8 @@ public class Server {
     }
 
     private static String saveAndGetObjectID(Company company) {
-        final ParseObject po = company.getParseObject();
+        //final ParseObject po = company.getParseObject();
+        final ParseObject po = ParseObjects.getParseObject(company);
         //wait until objectID return
         synchronized (lockObj) {
             po.saveInBackground(new SaveCallback() {

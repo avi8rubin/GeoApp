@@ -12,13 +12,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -30,13 +27,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import info.androidhive.materialtabs.GeoObjects.Company;
 import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
 import info.androidhive.materialtabs.common.GeoAppDBHelper;
 import info.androidhive.materialtabs.common.Globals;
-import info.androidhive.materialtabs.common.Server;
-import info.androidhive.materialtabs.common.User_callback;
 import info.androidhive.materialtabs.fragments.FourFragment;
 import info.androidhive.materialtabs.fragments.OneFragment;
 import info.androidhive.materialtabs.fragments.ThreeFragment;
@@ -344,6 +338,7 @@ public class IconTabsActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
     public void on_click_logout(View view){
+        //TODO update exit
         startActivity(new Intent(this, Login_Activity.class));
     }
     public void on_click_company_code(View view){

@@ -1,5 +1,6 @@
 package info.androidhive.materialtabs.common;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.parse.ParseException;
@@ -98,6 +99,11 @@ public class Server {
         if (status == Status.ENTER) {
             DB.CloseAllOpenShifts(); //Close in the local DB
             CloseAllOpenShifts(); //Close on server DB
+            if(!DB.allShiftsExists()) {
+                User u = new User();
+                u.setSystemID(shift.getUserID());
+                new AsyncTaskDownloadAllUserShifts().execute(u);
+            }
             //Create new shift record
             shift.setSystemID(saveAndGetObjectID(shift));
             DB.insert(shift);
@@ -367,5 +373,18 @@ public class Server {
         Company company = new Company(result.get(0));
         DB.insert(company); //The company not exists in the local DB
         return company;
+    }
+
+    private static class AsyncTaskDownloadAllUserShifts extends AsyncTask<User, Void, Void> {
+        @Override
+        protected Void doInBackground(User... params) {
+            User user;
+            user = getUserShifts(params[0]);
+            ArrayList<Shift> userShifts = user.getUserShifts();
+            for (Shift s : userShifts) {
+                DB.insert(s);
+            }
+            return null;
+        }
     }
 }

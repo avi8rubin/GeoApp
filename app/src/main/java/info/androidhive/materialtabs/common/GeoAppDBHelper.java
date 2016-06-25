@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
@@ -108,13 +109,14 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
             myDB.execSQL(sqlQuery);
         }
     }
+
     public boolean isShiftActive(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM "+SHIFT+" WHERE "+ShiftStatus+" = 1;", null);
         res.moveToFirst();
         return res.getCount() > 0;
     }
-    public String get_User_Start_shift() {
+    public String get_User_Start_shift(){
         SQLiteDatabase db = this.getReadableDatabase();
             Cursor resultSet = db.rawQuery("SELECT " + EnterTime + " FROM " + SHIFT + " WHERE " + ShiftStatus + " = 1;", null);
             if (resultSet.getCount() > 0) {
@@ -130,66 +132,44 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     }
     public void EnterNewShift(String SystemID){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("INSERT INTO "+SHIFT+" VALUES(NULL,1,'" + time
                 + "',NULL,NULL,NULL,NULL,NULL,'"+SystemID+"');");
     }
     public void EnterNewShift(double lat,double lng,String SystemID){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("INSERT INTO "+SHIFT+""
                 + " VALUES(NULL,1,'" + time + "',NULL,'" + String.valueOf(lat)
                 + "','" + String.valueOf(lng)  + "',NULL,NULL,'"
                 +SystemID+"');");
     }
-    public void ExitShift()
-    {
+    public void ExitShift(){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("UPDATE "+SHIFT+" SET "+ShiftStatus+"=0 " +
                 ","+ExitTime+"='" + time + "',"+ExitLocation_LNG+"=NULL,"+ExitLocation_LAT+"=NULL WHERE "+ShiftStatus+"=1;");
     }
-    public void ExitShift(double lat,double lng)
-    {
+    public void ExitShift(double lat,double lng){
         SQLiteDatabase db = this.getReadableDatabase();
-        String time = getDateTime();
+        String time = Globals.Now();
         db.execSQL("UPDATE "+SHIFT+" SET "+ShiftStatus+"=0 " +
                 ","+ExitTime+"='"+time+"',"+ExitLocation_LNG+"="+String.valueOf(lat)+","+ExitLocation_LAT
                 +"="+String.valueOf(lng)+ "WHERE "+ShiftStatus+"=1;");
     }
-    public Date getShiftEnterTime()
-    {
+    public Date getShiftEnterTime(){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor resultSet =db.rawQuery("SELECT " + EnterTime + " FROM "+SHIFT
                 + " WHERE " + ShiftStatus + "=1;", null);
         if (resultSet.getCount() > 0) {
             resultSet.moveToNext();
             String l = resultSet.getString(0);
-            return getDateTime(l);
+            return Globals.getStringToDateTime(l);
         }
         return new Date(System.currentTimeMillis()) ;
     }
 
 
-
-
-    public String getDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
-    }
-    public Date getDateTime(String str){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = null;
-        try {
-            date = format.parse(str);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return date;
-    }
 
     public Cursor getAllRowsFromTable(String tableName){
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
@@ -206,31 +186,46 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
      * @return return the number of rows that affected or the new row number in the table
      */
     private int genericUpsert (String tableName, ContentValues CV, String Where, String[] WhereValues){
-        if(DB==null || !DB.isOpen() || DB.isReadOnly()) //Open connection to sqlite database if not already opened
+        if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
+            DB = this.getWritableDatabase();
+        if(DB.isReadOnly())
             DB = this.getWritableDatabase();
         //Check if object already exists
-        if(Globals.isEmptyOrNull(Where)){
+        if(Globals.isEmptyOrNull(Where)) {
             // Insert new row
-            return (int)DB.insert(tableName,null,CV);
+            try {
+                return (int) DB.insertOrThrow(tableName, null, CV);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         else{
             // Update exists row
             return DB.update(tableName,CV,Where,WhereValues);
         }
+        return 0;
     }
     private Cursor genericSelect(String tableName, String[] columnName, String whereStatement,String[] WhereValues){
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
             DB = this.getReadableDatabase();
         SQLQuery = "SELECT "+Globals.stringArrayToString(columnName,",")+" FROM "+tableName+" ";
         try {
-            if (!Globals.isEmptyOrNull(whereStatement))
+            if (!Globals.isEmptyOrNull(whereStatement)) {
+                //TODO: STRING QUERY
+                String sTest = SQLQuery + "WHERE " + whereStatement + ";";
                 return DB.rawQuery(SQLQuery + "WHERE " + whereStatement + ";", WhereValues);
+            }
             else return DB.rawQuery(SQLQuery + ";", null);
         }
         catch(Exception e){
             e.printStackTrace();
         }
         return null;
+    }
+    private void upsert(User user){
+        Object result = select(user);
+        if(result instanceof Boolean)
+            insert(user);
     }
     public void insert(User user){
         genericUpsert(USER,user.getContentValues(),null,null);
@@ -263,11 +258,11 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         Cursor c = genericSelect(USER,ALL,"Email = ?",new String[]{user.getEmail()});
         return getStandardUserFromCursor(c);
     }
-    private void upsert(User user){
-        Object result = select(user);
-        if(result instanceof Boolean)
-            insert(user);
+    public Object select(Company company){ //Get user object by email
+        Cursor c = genericSelect(COMPANY,ALL,"CompanyCode = ?",new String[]{company.getCompanyCode()});
+        return getStandardCompanyFromCursor(c);
     }
+
     public Object getLastLoginUser(){
         String SQLQuery = "SELECT A.* FROM User A JOIN Settings B ON A.SystemID=B.LastUserID";
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
@@ -278,7 +273,8 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
     public void setLastLoginUser(User user){
         if(DB==null || !DB.isOpen() || DB.isReadOnly()  ) //Open connection to sqlite database if not already opened
             DB = this.getWritableDatabase();
-        DB.execSQL("DELETE FROM "+SETTINGS);
+        try{   DB.execSQL("DELETE FROM "+SETTINGS);}
+        catch(SQLException e){e.printStackTrace();}
         upsert(user);
         ContentValues CV = new ContentValues();
         CV.put("LastUserID",user.getSystemID());
@@ -315,12 +311,59 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
             company.setCompanyAddress(c.getString(4));
             company.setLocation(Double.valueOf(c.getInt(6)),Double.valueOf(c.getInt(5)));
             if(!Globals.isEmptyOrNull(c.getString(7)))
-                company.setCreateDate(getDateTime(c.getString(7)));
+                company.setCreateDate(Globals.getStringToDateTime(c.getString(7)));
             return company;
+        } else return false;
+    }
+    private Object getStandardShiftFromCursor(Cursor c){
+        if (c.getCount() > 0) {
+            Shift shift = new Shift();
+            c.moveToFirst();
+            shift.setSystemID(c.getString(c.getColumnIndex("SystemID")));
+            shift.setCompanyCode(c.getString(c.getColumnIndex("CompanyCode")));
+            shift.setUserID(c.getString(c.getColumnIndex("UserID")));
+            shift.setEnterTime(Globals.getStringToDateTime(c.getString(c.getColumnIndex("EnterTime"))));
+            shift.setExitTime(Globals.getStringToDateTime(c.getString(c.getColumnIndex("ExitTime"))));
+            shift.setEnterLocation(new ParseGeoPoint(c.getDouble(c.getColumnIndex("EnterLocation_LAT")),c.getDouble(c.getColumnIndex("EnterLocation_LNG"))));
+            shift.setExitLocation(new ParseGeoPoint(c.getDouble(c.getColumnIndex("ExitLocation_LAT")),c.getDouble(c.getColumnIndex("ExitLocation_LNG"))));
+            switch(c.getInt(c.getColumnIndex("ShiftStatus"))){
+                case 1: shift.setShiftStatus(Status.ENTER);break;
+                case 2: shift.setShiftStatus(Status.EXIT);break;
+                case 3: shift.setShiftStatus(Status.CLOSE);break;
+            }
+            return shift;
         } else return false;
     }
     public Object getCompanyByCompanyID(String CompanyID){
         Cursor c = genericSelect(COMPANY,ALL,"CompanyCode = ?",new String[]{CompanyID});
         return getStandardCompanyFromCursor(c);
+    }
+    public void updateCompanyToUser(Company company, User user){
+        ContentValues CV = new ContentValues();
+        CV.put("CompanyName",company.getCompanyName());
+        CV.put("CompanyCode",company.getCompanyCode());
+        update(user,CV);
+        insert(company);
+    }
+    public void updateUserAutoLogin(User user, Boolean status){
+        ContentValues CV = new ContentValues();
+        CV.put("AutoLogin",status);
+        update(user,CV);
+    }
+    public Object getOpenShift(){
+        Cursor c = genericSelect(SHIFT,ALL,"ShiftStatus = ?",new String[]{"1"});
+        return getStandardShiftFromCursor(c);
+    }
+    public void CloseAllOpenShifts(){
+        ContentValues CV = new ContentValues();
+        CV.put("ExitTime",Globals.Now());
+        CV.putNull("ExitLocation_LNG");
+        CV.putNull("ExitLocation_LAT");
+        genericUpsert(SHIFT,CV,"ShiftStatus = ?",new String[]{"1"});
+    }
+    public boolean allShiftsExists(){ //Check if it's the first time app install after deleted
+        Cursor c = getAllRowsFromTable(SHIFT);
+        if(c != null && c.getCount()>0) return true;
+        return false;
     }
 }

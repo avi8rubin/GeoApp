@@ -2,6 +2,8 @@ package info.androidhive.materialtabs.GeoObjects;
 
 import android.content.ContentValues;
 
+import com.parse.ParseObject;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,7 +18,7 @@ public class Company implements Serializable {
     private String CompanyName;
     private String ManagerID;
     private String ManagerEmail;
-    private String CompanyAddress;
+    private String CompanyAddress = "";
     private Double Location_LAT;
     private Double Location_LNG;
     private Date CreateDate;
@@ -26,9 +28,9 @@ public class Company implements Serializable {
         this.CompanyCode = CompanyCode;
         this.CompanyName = CompanyName;
     }
-    /*public Company(ParseObject po){
+    public Company(ParseObject po){
         setParseObject(po);
-    }*/
+    }
 
     public String getCompanyCode() {
         return CompanyCode;
@@ -76,7 +78,7 @@ public class Company implements Serializable {
         ManagerEmail = managerEmail.trim();
     }
 
-/*    public ParseObject getParseObject(){
+    public ParseObject getParseObject(){
         ParseObject po = new ParseObject("Company");
         po.put("Company_manager_email",ManagerEmail);
         po.put("Company_name",CompanyName);
@@ -85,8 +87,8 @@ public class Company implements Serializable {
         po.put("Location_LNG",Location_LNG);
         po.put("Manager_ID",ManagerID);
         return po;
-    }*/
-    /*public void setParseObject(ParseObject po){
+    }
+    public void setParseObject(ParseObject po){
         CompanyCode = po.getObjectId();
         ManagerEmail = po.getString("Company_manager_email");
         CompanyName = po.getString("Company_name");
@@ -95,14 +97,15 @@ public class Company implements Serializable {
         Location_LNG = po.getDouble("Location_LNG");
         ManagerID = po.getString("Manager_ID");
         CreateDate = po.getCreatedAt();
-    }*/
+    }
 
     public String getCompanyAddress() {
         return CompanyAddress;
     }
 
     public void setCompanyAddress(String companyAddress) {
-        CompanyAddress = companyAddress.trim();
+        if(companyAddress == null) CompanyAddress = null;
+        else CompanyAddress = companyAddress.trim();
     }
     public ContentValues getContentValues(){
         ContentValues CV = new ContentValues();
@@ -110,7 +113,8 @@ public class Company implements Serializable {
         CV.put("CompanyName",CompanyName);
         CV.put("ManagerID",ManagerID);
         CV.put("ManagerEmail",ManagerEmail);
-        CV.put("CompanyAddress",CompanyAddress);
+        if(CompanyAddress == null) CV.putNull("CompanyAddress");
+        else CV.put("CompanyAddress",CompanyAddress);
         CV.put("Location_LAT",Location_LAT);
         CV.put("Location_LNG",Location_LNG);
         CV.put("CreateDate", Globals.getDateTimeToString(CreateDate));

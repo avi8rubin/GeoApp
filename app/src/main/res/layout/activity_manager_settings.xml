@@ -106,7 +106,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Company Code"
+        android:text="@string/company_code"
         android:id="@+id/companyCodeL"
         android:textColor="@android:color/white"
         android:singleLine="false"

@@ -3,6 +3,8 @@ package info.androidhive.materialtabs.GeoObjects;
 import android.content.ContentValues;
 
 
+import com.parse.ParseObject;
+
 import info.androidhive.materialtabs.common.Status;
 
 import java.io.Serializable;
@@ -27,9 +29,9 @@ public class User implements Serializable {
 
     public User(){
     }
-    /*public User(ParseObject po){
+    public User(ParseObject po){
         setParseObject(po);
-    }*/
+    }
     public void addShift(Shift shift){
         UserShifts.add(shift);
     }
@@ -89,7 +91,7 @@ public class User implements Serializable {
     public String getSystemID() {
         return SystemID;
     }
-/*    public ParseObject getParseObject(){
+    public ParseObject getParseObject(){
         final ParseObject po = new ParseObject("Users");
         po.put("email",Email);
         po.put("user_password",Password);
@@ -101,8 +103,8 @@ public class User implements Serializable {
         po.put("CompanyName",CompanyName);
         po.put("CompanyCode",CompanyCode);
         return po;
-    }*/
-    /*public void setParseObject(ParseObject po){
+    }
+    public void setParseObject(ParseObject po){
         SystemID = po.getObjectId();
         Email = po.getString("email");
         Password = po.getString("user_password");
@@ -113,7 +115,7 @@ public class User implements Serializable {
         Role = po.getString("user_role");
         CompanyName = po.getString("CompanyName");
         CompanyCode = po.getString("CompanyCode");
-    }*/
+    }
     public String getCompanyName() {
         return CompanyName;
     }
@@ -154,48 +156,7 @@ public class User implements Serializable {
         CV.put("Role",Role);
         CV.put("CompanyName",CompanyName);
         CV.put("CompanyCode",CompanyCode);
+        CV.put("AutoLogin",AutoLogin);
         return CV;
     }
-
- /*   @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(SystemID);
-        dest.writeString(Email);
-        dest.writeString(Password);
-        dest.writeString(FirstName);
-        dest.writeString(LastName);
-        dest.writeInt(UserID);
-        dest.writeString(Phone);
-        dest.writeString(Role);
-        dest.writeString(CompanyName);
-        dest.writeString(CompanyCode);
-    }
-    private User(Parcel in){
-        SystemID = in.readString();
-        Email = in.readString();
-        Password = in.readString();
-        FirstName = in.readString();
-        LastName = in.readString();
-        UserID = in.readInt();
-        Phone = in.readString();
-        Role = in.readString();
-        CompanyName = in.readString();
-        CompanyCode = in.readString();
-    }
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel source) {
-            return new User(source);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };*/
 }

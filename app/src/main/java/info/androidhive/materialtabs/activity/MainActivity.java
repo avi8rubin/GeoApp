@@ -33,7 +33,7 @@ import info.androidhive.materialtabs.common.ReadFile;
 import info.androidhive.materialtabs.common.Server;
 
 public class MainActivity extends Activity {
-    public GeoAppDBHelper  DB;
+    private GeoAppDBHelper  DB;
     public MainActivity() {
         DB = null;
     }
@@ -43,16 +43,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         Parse.initialize(this, "WNbaXzzXNTyvDefzEFKoaIxXcdfDUtuac2g8ZgDC", "Sa4HLlt21b4wfycwoPgnR9aKOXfAQonhloO1zWUS");
         DB = new GeoAppDBHelper(getApplicationContext());
-        //this.deleteDatabase(DB.getDatabaseName());
-        //DB = new GeoAppDBHelper(getApplicationContext());
-
-
-
-
-
-
-
-
+        Globals.GeoAppContext = getApplicationContext();
         Object returnVal = DB.getLastLoginUser();
         if(returnVal instanceof User){  //Get user object back
             Intent intent;
@@ -78,16 +69,6 @@ public class MainActivity extends Activity {
         }
         else startActivity(new Intent(this,Login_Activity.class)); // User was not login in the past
 
-        /*
-        if(DB.isUserWasActive()) {
-            // startActivity(new Intent(this,Manager_screen.class));
-           startActivity(new Intent(this, Login_Activity.class));
-            //startActivity(new Intent(this,IconTabsActivity.class));
-        }
-        else
-        {
-            //startActivity(new Intent(this,LoginActivity.class));
-        }*/
     }
 
 }

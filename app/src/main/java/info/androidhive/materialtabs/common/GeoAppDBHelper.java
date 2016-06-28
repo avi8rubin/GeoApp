@@ -361,4 +361,9 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
         CV.putNull("ExitLocation_LAT");
         genericUpsert(SHIFT,CV,"ShiftStatus = ?",new String[]{"1"});
     }
+    public boolean allShiftsExists(){ //Check if it's the first time app install after deleted
+        Cursor c = getAllRowsFromTable(SHIFT);
+        if(c != null && c.getCount()>0) return true;
+        return false;
+    }
 }

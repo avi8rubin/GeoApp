@@ -143,9 +143,12 @@ public class Manager_screen extends AppCompatActivity implements OnItemSelectedL
         // not remove headers
         managerTable.removeViews(1, managerTable.getChildCount() - 1);
         if(CurrentWorkerShifts != null) {
+
             for (Shift s : CurrentWorkerShifts) {
-                //if((getMonth(s.getEnterTime()) == Month_number) && (getYear(s.getEnterTime()) == Year_number)) //Set data for current date
-                setShiftToTable(s);
+                if((getMonth(s.getEnterTime()) == Month_number) && (getYear(s.getEnterTime()) == Year_number)) { //Set data for current date
+
+                    setShiftToTable(s);
+                }
             }
         }
 

@@ -98,7 +98,10 @@ public class Server {
         Status status = shift.getShiftStatus();
         if (status == Status.ENTER) {
             DB.CloseAllOpenShifts(); //Close in the local DB
-            CloseAllOpenShifts(); //Close on server DB
+            User user = new User();
+            user.setEmail(shift.getUserEmail());
+            user.setSystemID(shift.getUserID());
+            CloseAllOpenShifts(user); //Close on server DB
             if(!DB.allShiftsExists()) {
                 User u = new User();
                 u.setSystemID(shift.getUserID());
@@ -143,7 +146,7 @@ public class Server {
         }
         return new Shift(result.get(0));
     }
-    private static void CloseAllOpenShifts() {
+    private static void CloseAllOpenShifts(User user) {
         List<ParseObject> result = null;
         ParseQuery query = new ParseQuery(SHIFTS);
         query.whereEqualTo("ShiftStatus", 1);

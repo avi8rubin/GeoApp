@@ -172,9 +172,16 @@ public class GeoAppDBHelper extends SQLiteOpenHelper {
 
 
     public Cursor getAllRowsFromTable(String tableName){
+        Cursor c =null;
         if(DB==null || !DB.isOpen()) //Open connection to sqlite database if not already opened
             DB = this.getReadableDatabase();
-        return DB.rawQuery("SELECT * FROM ?;", new String[]{tableName});
+        try {
+             c= DB.rawQuery("SELECT * FROM "+tableName+";", null);
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return c;
     }
 
     /**

@@ -113,7 +113,8 @@ public class Server {
             DB.update(shift);
             //Update exit time in current shift
             try {
-                ParseObject o = query.get(shift.getSystemID());
+                String str=shift.getSystemID();
+                ParseObject o = query.get(str);
                 o.put("exit_time", shift.getExitTime());
                 o.save();
             } catch (ParseException e) {

@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import info.androidhive.materialtabs.GeoObjects.Shift;
 import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
 import info.androidhive.materialtabs.common.GeoAppDBHelper;
 import info.androidhive.materialtabs.common.Globals;
+import info.androidhive.materialtabs.common.Server;
 import info.androidhive.materialtabs.fragments.FourFragment;
 import info.androidhive.materialtabs.fragments.OneFragment;
 import info.androidhive.materialtabs.fragments.ThreeFragment;
@@ -74,11 +76,11 @@ public class IconTabsActivity extends AppCompatActivity {
         Year_number = cal.get(Calendar.YEAR);
 
 
-
-        if(DB.isShiftActive())
+        Object returnobj=Server.getOpenShift();
+        if(returnobj instanceof Shift)
         {
             shift_status=true;
-            Shift_start_Time=DB.get_User_Start_shift();
+            Shift_start_Time= ((Shift) returnobj).getEnterTime().toString();
         }
         else
         {
@@ -150,7 +152,6 @@ public class IconTabsActivity extends AppCompatActivity {
                         Company_code_input.setText("");
                         Company_code_btn.setText(R.string.enter_comapny_code);
                     }
-
                 }
 
             }
@@ -196,12 +197,14 @@ public class IconTabsActivity extends AppCompatActivity {
     public void onclick_enter(View view){
         Intent i = new Intent(this, MapsActivity.class);
         i.putExtra("EnterOrExit", "Enter");
+        i.putExtra(Globals.EXTRA_USER, Current_User);
         startActivity(i);
 
     }
     public void onclick_exit(View view){
         Intent i = new Intent(this, MapsActivity.class);
         i.putExtra("EnterOrExit", "Exit");
+        i.putExtra(Globals.EXTRA_USER, Current_User);
         startActivity(i);
 
     }
@@ -375,5 +378,9 @@ public class IconTabsActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Current_User =(User)getIntent().getSerializableExtra(Globals.EXTRA_USER);
+    }
 }

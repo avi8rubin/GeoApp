@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -36,8 +37,10 @@ import java.util.Date;
 import java.util.Locale;
 
 import info.androidhive.materialtabs.GeoObjects.Shift;
+import info.androidhive.materialtabs.GeoObjects.User;
 import info.androidhive.materialtabs.R;
 import info.androidhive.materialtabs.common.GeoAppDBHelper;
+import info.androidhive.materialtabs.common.Globals;
 import info.androidhive.materialtabs.common.Server;
 import info.androidhive.materialtabs.common.Status;
 
@@ -64,6 +67,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SQLiteDatabase myDB;
     private boolean is_Enter_screen;
     public GeoAppDBHelper DB;
+    private User Current_User;
+
     public MapsActivity() {
     }
 
@@ -316,21 +321,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void Onclick_Enter(View view){
         try {
+        Current_User =new User();
+        Current_User =(User)getIntent().getSerializableExtra(Globals.EXTRA_USER);
         currentShift = new Shift();
         currentShift.setEnterTimeNow();
-        currentShift.setUserEmail(getCurrentActiveEmailUser());
-        currentShift.setUserID(getCurrentActiveIDUser());
-        currentShift.setCompanyCode(getCurrentActiveCompanycodeUser());
+        currentShift.setUserEmail(String.valueOf(Current_User.getUserID()));
+        currentShift.setUserID(Current_User.getSystemID());
+        currentShift.setCompanyCode(Current_User.getCompanyCode());
         currentShift.setEnterLocation(new ParseGeoPoint(lat, lng));
         currentShift.setShiftStatus(Status.ENTER);
         currentShift = (Shift) Server.setShiftStatus(currentShift);
-            DB.EnterNewShift(lat, lng, currentShift.getSystemID());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        startActivity(new Intent(this, IconTabsActivity.class));
+        MainScreen();
     }
 
     /**
@@ -340,23 +346,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void Onclicl_Enter_anyway(View view){
         try{
+            Current_User =new User();
+            Current_User =(User)getIntent().getSerializableExtra(Globals.EXTRA_USER);
         currentShift = new Shift();
         currentShift.setEnterTimeNow();
-        currentShift.setUserEmail(getCurrentActiveEmailUser());
-        currentShift.setUserID(getCurrentActiveIDUser());
-        currentShift.setCompanyCode(getCurrentActiveCompanycodeUser());
-        currentShift.setEnterLocation(new ParseGeoPoint(lat, lng));
+            currentShift.setUserEmail(String.valueOf(Current_User.getUserID()));
+            currentShift.setUserID(Current_User.getSystemID());
+            currentShift.setCompanyCode(Current_User.getCompanyCode());
+        currentShift.setEnterLocation(new ParseGeoPoint(0, 0));
         currentShift.setShiftStatus(Status.ENTER);
         currentShift = (Shift) Server.setShiftStatus(currentShift);
-
-        Server.setShiftStatus(currentShift);
-        DB.EnterNewShift(currentShift.getSystemID());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        startActivity(new Intent(this, IconTabsActivity.class));
+        MainScreen();
     }
 
     /**
@@ -367,18 +372,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void Onclick_Exit(View view){
 
         try {
+            Current_User =new User();
             currentShift = new Shift();
-            currentShift.setEnterTime(DB.getShiftEnterTime());
+            Current_User =(User)getIntent().getSerializableExtra(Globals.EXTRA_USER);
+            Object returnvalue = Server.getOpenShift();
+            if(returnvalue instanceof Shift)
+                currentShift = (Shift) returnvalue;
+            else
+                Log.i("error","server exit shift error!");
             currentShift.setExitTimeNow();
-            currentShift.setUserEmail(getCurrentActiveEmailUser());
-            currentShift.setUserID(getCurrentActiveIDUser());
-            currentShift.setCompanyCode(getCurrentActiveCompanycodeUser());
+            currentShift.setExitLocation(new ParseGeoPoint(lat, lng));
             currentShift.setShiftStatus(Status.EXIT);
-            String str = getShiftObjectIDFromParse();
-            currentShift.setSystemID(str);
             Server.setShiftStatus(currentShift);
-            DB.ExitShift(lat, lng);
-            startActivity(new Intent(this,IconTabsActivity.class));
+            MainScreen();
+
         }
         catch (Exception e)
         {
@@ -394,106 +401,86 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try
         {
+            Current_User =new User();
             currentShift = new Shift();
-            currentShift.setEnterTime(DB.getShiftEnterTime());
+            Current_User =(User)getIntent().getSerializableExtra(Globals.EXTRA_USER);
+            Object returnvalue = Server.getOpenShift();
+            if(returnvalue instanceof Shift)
+                currentShift = (Shift) returnvalue;
+            else
+                Log.i("error","server exit shift error!");
             currentShift.setExitTimeNow();
-            currentShift.setUserEmail(getCurrentActiveEmailUser());
-            currentShift.setUserID(getCurrentActiveIDUser());
-            currentShift.setCompanyCode(getCurrentActiveCompanycodeUser());
+            currentShift.setExitLocation(new ParseGeoPoint(0, 0));
             currentShift.setShiftStatus(Status.EXIT);
-            String str = getShiftObjectIDFromParse();
-            currentShift.setSystemID(str);
             Server.setShiftStatus(currentShift);
-            DB.ExitShift();
-            startActivity(new Intent(this, IconTabsActivity.class));
+            MainScreen();
+
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
     }
+    public void MainScreen(){
 
-    /**
-     * return DATATIME type
-     * @return
-     */
-    public String getDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
+
+        Intent i = new Intent(this, IconTabsActivity.class);
+        i.putExtra(Globals.EXTRA_USER, Current_User);
+        startActivity(i);
     }
-
-
-    public void get_new_current_user(){
-
-        if (myDB == null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet = myDB.rawQuery("SELECT Email,User_Password FROM Setting WHERE User_active=1;", null);
-        int x= resultSet.getCount();
-        if (x > 0) {
-            resultSet.moveToNext();
-            String s1 = resultSet.getString(0);
-            String s2 = resultSet.getString(1);
-            ActiveEmail=s1;
-            ActivePassword=s2;
-        }
-
-    }
-
-    public String getShiftObjectIDFromParse() { //Server.getOpenShift()
-        try {
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-            Cursor resultSet = myDB.rawQuery("SELECT SystemID FROM ShiftBuffer WHERE Shift_status=1;", null);
-            int x = resultSet.getCount();
-            if (x > 0) {
-                resultSet.moveToNext();
-                String s1 = resultSet.getString(0);
-                return s1;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-
-    }
-    public String getCurrentActiveEmailUser(){ //No need, you get intent, just open and save it in the activity creation.
-        if (myDB == null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet = myDB.rawQuery("SELECT Email,User_Password FROM Setting WHERE User_active=1;", null);
-        int x= resultSet.getCount();
-        if (x > 0) {
-            resultSet.moveToNext();
-            String s1 = resultSet.getString(0);
-            return s1;
-        }
-        return "";
-    }
-    public String getCurrentActiveIDUser(){//No need, you get intent, just open and save it in the activity creation.
-        if (myDB == null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet = myDB.rawQuery("SELECT User_TZ FROM Setting WHERE User_active=1;", null);
-        int x= resultSet.getCount();
-        if (x > 0) {
-            resultSet.moveToNext();
-            int id = resultSet.getInt(0);
-            String s1 = resultSet.getString(0);
-            return String.valueOf(id);
-        }
-        return "";
-    }
-    public String getCurrentActiveCompanycodeUser(){//No need, you get intent, just open and save it in the activity creation.
-        if (myDB == null)
-            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
-        Cursor resultSet = myDB.rawQuery("SELECT User_Company_code FROM Setting WHERE User_active=1;", null);
-        int x= resultSet.getCount();
-        if (x > 0) {
-            resultSet.moveToNext();
-            String s1 = resultSet.getString(0);
-            return s1;
-        }
-        return "";
-    }
+//    public String getShiftObjectIDFromParse() { //Server.getOpenShift()
+//        try {
+//            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
+//            Cursor resultSet = myDB.rawQuery("SELECT SystemID FROM ShiftBuffer WHERE Shift_status=1;", null);
+//            int x = resultSet.getCount();
+//            if (x > 0) {
+//                resultSet.moveToNext();
+//                String s1 = resultSet.getString(0);
+//                return s1;
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return "";
+//
+//    }
+//    public String getCurrentActiveEmailUser(){ //No need, you get intent, just open and save it in the activity creation.
+//        if (myDB == null)
+//            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
+//        Cursor resultSet = myDB.rawQuery("SELECT Email,User_Password FROM Setting WHERE User_active=1;", null);
+//        int x= resultSet.getCount();
+//        if (x > 0) {
+//            resultSet.moveToNext();
+//            String s1 = resultSet.getString(0);
+//            return s1;
+//        }
+//        return "";
+//    }
+//    public String getCurrentActiveIDUser(){//No need, you get intent, just open and save it in the activity creation.
+//        if (myDB == null)
+//            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
+//        Cursor resultSet = myDB.rawQuery("SELECT User_TZ FROM Setting WHERE User_active=1;", null);
+//        int x= resultSet.getCount();
+//        if (x > 0) {
+//            resultSet.moveToNext();
+//            int id = resultSet.getInt(0);
+//            String s1 = resultSet.getString(0);
+//            return String.valueOf(id);
+//        }
+//        return "";
+//    }
+//    public String getCurrentActiveCompanycodeUser(){//No need, you get intent, just open and save it in the activity creation.
+//        if (myDB == null)
+//            myDB = this.openOrCreateDatabase("GeoDB", MODE_PRIVATE, null);
+//        Cursor resultSet = myDB.rawQuery("SELECT User_Company_code FROM Setting WHERE User_active=1;", null);
+//        int x= resultSet.getCount();
+//        if (x > 0) {
+//            resultSet.moveToNext();
+//            String s1 = resultSet.getString(0);
+//            return s1;
+//        }
+//        return "";
+//    }
 
 }
